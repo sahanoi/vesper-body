@@ -1,0 +1,1420 @@
+{
+  "products": [
+    {
+      "id": "prod-aura-bride",
+      "slug": "aura-bride-ipek-saten-volanli-bodysuit",
+      "name": "Aura Bride İpek Saten & Dantel Volanlı Bodysuit",
+      "subtitle": "Fırfırlı Etek Ucu, Fransız Dantel İşlemeli & Balenli Saten Bodysuit",
+      "category": "bodysuit-tulum",
+      "categoryName": "Bodysuit & Tulum",
+      "price": 1950,
+      "compareAtPrice": 2450,
+      "currency": "TRY",
+      "spiceLevel": "romantic",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": false,
+      "description": "Gelin koleksiyonumuzun ve romantik boudoir çekimlerinin başyapıtı Aura Bride; kupon Fransız danteli, balenli dikleştirici kupları ve kalça hattındaki çift kat fırfırlı tül volanlarıyla heykelsi bir zarafet sunar. Beyaz jartiyer çorapları ile mükemmel uyum sağlar.",
+      "fabricDetails": [
+        "%82 İtalyan İpek Dokulu Saten, %18 Fransız Danteli",
+        "Doğal dikleştirici balenli göğüs kupları",
+        "Ayarlanabilir saten omuz askıları ve sırt kopçası",
+        "%100 saf pamuklu hijyenik iç ağ astarı"
+      ],
+      "modelMeasurements": "Model Boy: 176 cm | Göğüs: 85, Bel: 60, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "aur-1",
+          "type": "image",
+          "url": "/images/products/aura-bride-bodysuit/aura-bride-bodysuit-1.jpg",
+          "alt": "Aura Bride Bodysuit Oturuş Pozu",
+          "caption": "Balenli saten kuplar ve kalça fırfır detayı"
+        },
+        {
+          "id": "aur-2",
+          "type": "image",
+          "url": "/images/products/aura-bride-bodysuit/aura-bride-bodysuit-2.jpg",
+          "alt": "Aura Bride Stüdyo Beyaz Fon Çekimi",
+          "caption": "Koleksiyon stüdyo ürün çekimi"
+        },
+        {
+          "id": "aur-3",
+          "type": "image",
+          "url": "/images/products/aura-bride-bodysuit/aura-bride-bodysuit-3.jpg",
+          "alt": "Aura Bride Ayna Yakın Çekim",
+          "caption": "Fransız danteli ve göğüs dekoltesi doku detayı"
+        },
+        {
+          "id": "aur-4",
+          "type": "image",
+          "url": "/images/products/aura-bride-bodysuit/aura-bride-bodysuit-4.jpg",
+          "alt": "Aura Bride Sırt ve Kalça Kesimi",
+          "caption": "Çift kat tül fırfır ve derin sırt bağcığı"
+        },
+        {
+          "id": "aur-5",
+          "type": "image",
+          "url": "/images/products/aura-bride-bodysuit/aura-bride-bodysuit-5.jpg",
+          "alt": "Aura Bride Boydan Ayakta Duruş",
+          "caption": "Tam boy silüet ve beyaz çorap kombinasyonu"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-AUR-XS",
+          "stock": 4
+        },
+        {
+          "size": "S",
+          "sku": "VSP-AUR-S",
+          "stock": 12
+        },
+        {
+          "size": "M",
+          "sku": "VSP-AUR-M",
+          "stock": 9
+        },
+        {
+          "size": "L",
+          "sku": "VSP-AUR-L",
+          "stock": 3
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-AUR-XL",
+          "stock": 2
+        }
+      ],
+      "createdAt": "2026-10-28T10:00:00Z"
+    },
+    {
+      "id": "prod-nocturne-lace",
+      "slug": "nocturne-transparan-cicekli-dantel-babydoll",
+      "name": "Nocturne Transparan Çiçekli Dantel Babydoll Elbise",
+      "subtitle": "İtalyan Tülü Üzerine Nakışlı Çiçek Motifleri & Askılı Mini Silüet",
+      "category": "babydoll-gecelik",
+      "categoryName": "Babydoll & Sabahlık",
+      "price": 1790,
+      "compareAtPrice": 2200,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": true,
+      "description": "Ultra ince transparan mikro-tül zemin üzerine işlenen el yapımı çiçek kabartmalarıyla Nocturne Babydoll; vücudu sararak gizemli ve baştan çıkarıcı bir hava katar. Hareket halindeki ışık kırılmalarıyla büyüleyici bir duruş sergiler.",
+      "fabricDetails": [
+        "%85 Mikro-Tül, %15 İpeksi Polyamid",
+        "Yırtılmaya karşı güçlendirilmiş esnek dantel örgüsü",
+        "İnce spagetti ayarlanabilir omuz askıları"
+      ],
+      "modelMeasurements": "Model Boy: 175 cm | Göğüs: 86, Bel: 61, Kalça: 89 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "noc-1",
+          "type": "image",
+          "url": "/images/products/nocturne-lace-babydoll/nocturne-lace-babydoll-1.jpg",
+          "alt": "Nocturne Babydoll Kanepe Pozu",
+          "caption": "Çiçekli transparan doku önizlemesi"
+        },
+        {
+          "id": "noc-vid-1",
+          "type": "video",
+          "url": "/videos/products/nocturne-lace-babydoll/nocturne-loop-1.mp4",
+          "posterUrl": "/images/products/nocturne-lace-babydoll/nocturne-lace-babydoll-1.jpg",
+          "alt": "Nocturne Canlı Kumaş Akış Videosu (HD Loop)",
+          "caption": "Canlı hareket ve ışık yansıması"
+        },
+        {
+          "id": "noc-2",
+          "type": "image",
+          "url": "/images/products/nocturne-lace-babydoll/nocturne-lace-babydoll-2.jpg",
+          "alt": "Nocturne Duvar Kenarı Duruş",
+          "caption": "Zarif askılı mini boy kesim"
+        },
+        {
+          "id": "noc-3",
+          "type": "image",
+          "url": "/images/products/nocturne-lace-babydoll/nocturne-lace-babydoll-3.jpg",
+          "alt": "Nocturne Yatak Üstü Arka Silüet",
+          "caption": "Transparan etek ucu fistosu"
+        },
+        {
+          "id": "noc-4",
+          "type": "image",
+          "url": "/images/products/nocturne-lace-babydoll/nocturne-lace-babydoll-4.jpg",
+          "alt": "Nocturne Boydan Stüdyo Çekimi",
+          "caption": "Komple oda çekimi ve döküm"
+        },
+        {
+          "id": "noc-vid-2",
+          "type": "video",
+          "url": "/videos/products/nocturne-lace-babydoll/nocturne-loop-2.mp4",
+          "posterUrl": "/images/products/nocturne-lace-babydoll/nocturne-lace-babydoll-4.jpg",
+          "alt": "Nocturne Ayna Karşısı Boydan Video",
+          "caption": "Ayna önü tam boy canlı görünüm"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-NOC-XS",
+          "stock": 6
+        },
+        {
+          "size": "S",
+          "sku": "VSP-NOC-S",
+          "stock": 15
+        },
+        {
+          "size": "M",
+          "sku": "VSP-NOC-M",
+          "stock": 11
+        },
+        {
+          "size": "L",
+          "sku": "VSP-NOC-L",
+          "stock": 4
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-NOC-XL",
+          "stock": 1
+        }
+      ],
+      "createdAt": "2026-10-28T11:00:00Z"
+    },
+    {
+      "id": "prod-siren-opera",
+      "slug": "siren-opera-eldivenli-dantel-jartiyer-seti",
+      "name": "Siren Opera Eldivenli Dantel Balkonet & Jartiyer Etek Seti",
+      "subtitle": "Balenli Dantel Büstiyer, Transparan Jartiyer Etek ve Saten Opera Eldiveni (3 Parça)",
+      "category": "jartiyer-setleri",
+      "categoryName": "Jartiyer Takımları",
+      "price": 2150,
+      "compareAtPrice": 2700,
+      "currency": "TRY",
+      "spiceLevel": "daring",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": true,
+      "description": "Gecenin en iddialı görünümlerinden biri için kurgulanan Siren Set; balenli dantel balkonet sütyen, kalçayı saran transparan jartiyer askılı mini etek ve dirsek üstü saten opera eldivenleriyle birlikte 3 parça tam takım olarak sunulur.",
+      "fabricDetails": [
+        "%80 Fransız Danteli, %20 Esnek Likralı Tül",
+        "Parlak esnek saten dirsek üstü opera eldivenleri dahil",
+        "Ayarlanabilir metal jartiyer klipsleri"
+      ],
+      "modelMeasurements": "Model Boy: 177 cm | Göğüs: 86, Bel: 61, Kalça: 91 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "sir-1",
+          "type": "image",
+          "url": "/images/products/siren-opera-garter-set/siren-opera-garter-set-1.jpg",
+          "alt": "Siren Opera Eldivenli Set Merdiven Çekimi",
+          "caption": "Merdiven önü tam boy silüet"
+        },
+        {
+          "id": "sir-2",
+          "type": "image",
+          "url": "/images/products/siren-opera-garter-set/siren-opera-garter-set-2.jpg",
+          "alt": "Siren Set Merdiven Orta Boy",
+          "caption": "Balkonet sütyen ve jartiyer etek uyumu"
+        },
+        {
+          "id": "sir-3",
+          "type": "image",
+          "url": "/images/products/siren-opera-garter-set/siren-opera-garter-set-3.jpg",
+          "alt": "Siren Set Ön Yakın Plan",
+          "caption": "Saten eldiven ve balenli göğüs kupları"
+        },
+        {
+          "id": "sir-4",
+          "type": "image",
+          "url": "/images/products/siren-opera-garter-set/siren-opera-garter-set-4.jpg",
+          "alt": "Siren Set Arka Görünüm",
+          "caption": "Transparan file etek ve string detay"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-SIR-XS",
+          "stock": 5
+        },
+        {
+          "size": "S",
+          "sku": "VSP-SIR-S",
+          "stock": 14
+        },
+        {
+          "size": "M",
+          "sku": "VSP-SIR-M",
+          "stock": 8
+        },
+        {
+          "size": "L",
+          "sku": "VSP-SIR-L",
+          "stock": 2
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-SIR-XL",
+          "stock": 0
+        }
+      ],
+      "createdAt": "2026-10-28T12:00:00Z"
+    },
+    {
+      "id": "prod-etoile-satin",
+      "slug": "etoile-dekolteli-saten-mini-gecelik",
+      "name": "Étoile Dekolteli Saten Mini Gecelik",
+      "subtitle": "Göğüs Altı Pencere Dekolteli & Derin Sırt Bağcıklı İpek Saten Mini Elbise",
+      "category": "babydoll-gecelik",
+      "categoryName": "Babydoll & Sabahlık",
+      "price": 1650,
+      "compareAtPrice": 1990,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": false,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": false,
+      "description": "Ağır gramajlı sıvı saten kumaştan üretilen Étoile Slip Elbise; göğüs altındaki geometrik pencere dekoltesi ve bele kadar inen sırt bağcıklarıyla hem minimal hem de son derece çarpıcı bir gece elbisesidir.",
+      "fabricDetails": [
+        "%96 İpeksi Saten, %4 Likra",
+        "Yan yırtmaçlı mini etek boyu",
+        "Kademeli ayarlanabilir sırt bağcıkları"
+      ],
+      "modelMeasurements": "Model Boy: 174 cm | Göğüs: 84, Bel: 60, Kalça: 88 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "eto-1",
+          "type": "image",
+          "url": "/images/products/etoile-satin-slip-dress/etoile-satin-slip-dress-1.jpg",
+          "alt": "Étoile Saten Gecelik Yatak Üstü Duruş",
+          "caption": "Akışkan saten dokusu ve yan yırtmaç"
+        },
+        {
+          "id": "eto-2",
+          "type": "image",
+          "url": "/images/products/etoile-satin-slip-dress/etoile-satin-slip-dress-2.jpg",
+          "alt": "Étoile Gecelik Ön Dekolte Yakın Plan",
+          "caption": "Göğüs altı pencere kesimi"
+        },
+        {
+          "id": "eto-3",
+          "type": "image",
+          "url": "/images/products/etoile-satin-slip-dress/etoile-satin-slip-dress-3.jpg",
+          "alt": "Étoile Gecelik Sırt Dekoltesi",
+          "caption": "Derin açık sırt ve dantel bitiş"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-ETO-XS",
+          "stock": 6
+        },
+        {
+          "size": "S",
+          "sku": "VSP-ETO-S",
+          "stock": 16
+        },
+        {
+          "size": "M",
+          "sku": "VSP-ETO-M",
+          "stock": 10
+        },
+        {
+          "size": "L",
+          "sku": "VSP-ETO-L",
+          "stock": 5
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-ETO-XL",
+          "stock": 3
+        }
+      ],
+      "createdAt": "2026-10-28T13:00:00Z"
+    },
+    {
+      "id": "prod-amour-ruffle",
+      "slug": "amour-firfirli-balenli-fantezi-boudoir-takimi",
+      "name": "Amour Fırfırlı Balenli Fantezi Boudoir Takımı",
+      "subtitle": "Fiyonklu Balenli Göğüs Tasarımı, Gerdanlık Choker ve Mikro Fırfırlı Etek Seti",
+      "category": "sutyen-takimlari",
+      "categoryName": "Sütyen & Fantezi Setler",
+      "price": 1490,
+      "compareAtPrice": 1850,
+      "currency": "TRY",
+      "spiceLevel": "daring",
+      "isFeatured": false,
+      "isNewArrival": false,
+      "isAfterDarkExclusive": true,
+      "description": "Oyunbaz ve cesur bir dokunuş arayanlar için hazırlanan Amour Set; merkezde bağlanan saten fiyonk detayı, balenli yarım kupları, pırlanta parlaklığında kristal choker kolyesi ve hareketli mikro fırfırlı eteğiyle eksiksiz bir fantezi setidir.",
+      "fabricDetails": [
+        "%88 Şifon Tül, %12 Elastan",
+        "Kristal taş işlemeli ayarlanabilir choker gerdanlık dahil",
+        "Mikro pileli şifon fırfır etek"
+      ],
+      "modelMeasurements": "Model Boy: 175 cm | Göğüs: 85, Bel: 59, Kalça: 89 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "amr-1",
+          "type": "image",
+          "url": "/images/products/amour-ruffle-balconette-set/amour-ruffle-balconette-set-1.jpg",
+          "alt": "Amour Boudoir Takımı Kanepe Pozu",
+          "caption": "Fiyonk detaylı yarım kup ve choker kolye"
+        },
+        {
+          "id": "amr-2",
+          "type": "image",
+          "url": "/images/products/amour-ruffle-balconette-set/amour-ruffle-balconette-set-2.jpg",
+          "alt": "Amour Set Ayakta Şampanya Pozu",
+          "caption": "Fırfırlı mikro etek ve balen tasarımı"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-AMR-XS",
+          "stock": 3
+        },
+        {
+          "size": "S",
+          "sku": "VSP-AMR-S",
+          "stock": 9
+        },
+        {
+          "size": "M",
+          "sku": "VSP-AMR-M",
+          "stock": 7
+        },
+        {
+          "size": "L",
+          "sku": "VSP-AMR-L",
+          "stock": 1
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-AMR-XL",
+          "stock": 0
+        }
+      ],
+      "createdAt": "2026-10-28T14:00:00Z"
+    },
+    {
+      "id": "prod-marquise-robe",
+      "slug": "marquise-tuy-detayli-ipek-saten-boudoir-sabahlik",
+      "name": "Marquise Tüy Detaylı İpek Saten Boudoir Sabahlık",
+      "subtitle": "Kol Manşetleri ve Etek Ucu Yoğun Doğal Tüy İşlemeli Kuşaklı Saten Kimono",
+      "category": "babydoll-gecelik",
+      "categoryName": "Babydoll & Sabahlık",
+      "price": 2450,
+      "compareAtPrice": 2950,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": false,
+      "description": "Lüksün ve zarafetin en yüksek ifadesi olan Marquise Sabahlık; İtalyan mat saten kumaşının ağırlığı ve el işçiliğiyle manşetlere ve etek ucuna kondurulan kabarık devekuşu tüyleriyle unutulmaz bir boudoir stilini garantiler.",
+      "fabricDetails": [
+        "%100 Ağır Gramajlı İtalyan Mat Sateni",
+        "Dökülmeyen yoğun doğal devekuşu tüy bordürü",
+        "Geniş saten bağlama kuşağı dahil"
+      ],
+      "modelMeasurements": "Model Boy: 178 cm | Göğüs: 87, Bel: 62, Kalça: 92 | Standart Beden (XS-L Uyumlu)",
+      "hygieneSealRequired": false,
+      "media": [
+        {
+          "id": "mar-1",
+          "type": "image",
+          "url": "/images/products/marquise-feather-satin-robe/marquise-feather-satin-robe-1.jpg",
+          "alt": "Marquise Sabahlık Askıdaki Tüy Detayı",
+          "caption": "Kabarık tüy manşetleri ve kupon saten"
+        },
+        {
+          "id": "mar-2",
+          "type": "image",
+          "url": "/images/products/marquise-feather-satin-robe/marquise-feather-satin-robe-2.jpg",
+          "alt": "Marquise Sabahlık Model Üzerinde Duruş",
+          "caption": "Kuşaklı dökümlü kimono kesim"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-MAR-XS",
+          "stock": 4
+        },
+        {
+          "size": "S",
+          "sku": "VSP-MAR-S",
+          "stock": 10
+        },
+        {
+          "size": "M",
+          "sku": "VSP-MAR-M",
+          "stock": 12
+        },
+        {
+          "size": "L",
+          "sku": "VSP-MAR-L",
+          "stock": 6
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-MAR-XL",
+          "stock": 2
+        }
+      ],
+      "createdAt": "2026-10-28T15:00:00Z"
+    },
+    {
+      "id": "prod-scarlet-lace",
+      "slug": "scarlet-kirpik-dantelli-balenli-bordo-bodysuit",
+      "name": "Scarlet Kirpik Dantelli Balenli Bordo Bodysuit",
+      "subtitle": "Yakut Kırmızısı Kirpik Dantel, Balenli Destek ve Derin Sırt Pencereli Romper",
+      "category": "bodysuit-tulum",
+      "categoryName": "Bodysuit & Tulum",
+      "price": 1690,
+      "compareAtPrice": 2100,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": true,
+      "isNewArrival": false,
+      "isAfterDarkExclusive": false,
+      "description": "Yakut renginin sıcaklığını tenle buluşturan Scarlet Bodysuit; göğüs altında balen desteği ve narin kirpik dantel kenarlarıyla doğal bir toparlama sağlar. Özel sırt dekoltesi ve yüksek bacak oyuntusu bacak boyunu daha uzun gösterir.",
+      "fabricDetails": [
+        "%82 Fransız Kirpik Danteli, %18 Elastan",
+        "Balenli destekleyici kalıp",
+        "Alttan çıtçıtlı pratik kapatma"
+      ],
+      "modelMeasurements": "Model Boy: 175 cm | Göğüs: 85, Bel: 60, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "sca-1",
+          "type": "image",
+          "url": "/images/products/scarlet-lace-ruby-bodysuit/scarlet-lace-ruby-bodysuit-1.jpg",
+          "alt": "Scarlet Bordo Bodysuit Ön Yakın Plan",
+          "caption": "Kirpik dantel ve balen kup detayı"
+        },
+        {
+          "id": "sca-2",
+          "type": "image",
+          "url": "/images/products/scarlet-lace-ruby-bodysuit/scarlet-lace-ruby-bodysuit-2.jpg",
+          "alt": "Scarlet Bodysuit Kanepe Oturuş Pozu",
+          "caption": "Vücudu saran şarap bordosu tül"
+        },
+        {
+          "id": "sca-3",
+          "type": "image",
+          "url": "/images/products/scarlet-lace-ruby-bodysuit/scarlet-lace-ruby-bodysuit-3.jpg",
+          "alt": "Scarlet Bodysuit Sırt ve Kalça Kesimi",
+          "caption": "Derin sırt penceresi ve dantel paça"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-SCA-XS",
+          "stock": 5
+        },
+        {
+          "size": "S",
+          "sku": "VSP-SCA-S",
+          "stock": 15
+        },
+        {
+          "size": "M",
+          "sku": "VSP-SCA-M",
+          "stock": 11
+        },
+        {
+          "size": "L",
+          "sku": "VSP-SCA-L",
+          "stock": 4
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-SCA-XL",
+          "stock": 2
+        }
+      ],
+      "createdAt": "2026-10-28T16:00:00Z"
+    },
+    {
+      "id": "prod-noir-lace",
+      "slug": "noir-kirpik-dantelli-balenli-siyah-bodysuit",
+      "name": "Noir Kirpik Dantelli Balenli Siyah Bodysuit",
+      "subtitle": "Transparan Çiçekli Fransız Danteli, Balenli Kalıp ve Bacak Oyuntulu Kesim",
+      "category": "bodysuit-tulum",
+      "categoryName": "Bodysuit & Tulum",
+      "price": 1690,
+      "compareAtPrice": 2100,
+      "currency": "TRY",
+      "spiceLevel": "daring",
+      "isFeatured": true,
+      "isNewArrival": false,
+      "isAfterDarkExclusive": true,
+      "description": "Zamansız siyahın baştan çıkarıcı gücü. İtalyan tülü ve kirpik uçlu Fransız dantelinin kusursuz dengesiyle tasarlanan Noir Bodysuit, göğsü destekleyen balenleri ve transparan gövde panelleriyle After Dark koleksiyonunun en çok aranan parçalarındandır.",
+      "fabricDetails": [
+        "%80 İtalyan Tülü, %20 Fransız Danteli",
+        "Balenli dikleştirici kuplar",
+        "Pamuklu iç ağ koruması"
+      ],
+      "modelMeasurements": "Model Boy: 176 cm | Göğüs: 86, Bel: 61, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "noi-1",
+          "type": "image",
+          "url": "/images/products/noir-lace-balconette-bodysuit/noir-lace-balconette-bodysuit-1.jpg",
+          "alt": "Noir Siyah Bodysuit Ayakta Duruş",
+          "caption": "Transparan çiçekli dantel gövde"
+        },
+        {
+          "id": "noi-2",
+          "type": "image",
+          "url": "/images/products/noir-lace-balconette-bodysuit/noir-lace-balconette-bodysuit-2.jpg",
+          "alt": "Noir Bodysuit Sırt ve Kalça Detayı",
+          "caption": "Bacak boyunu uzatan yüksek oyuntu"
+        },
+        {
+          "id": "noi-3",
+          "type": "image",
+          "url": "/images/products/noir-lace-balconette-bodysuit/noir-lace-balconette-bodysuit-3.jpg",
+          "alt": "Noir Bodysuit Kanepe Uzanış",
+          "caption": "Gövdeyi saran elastik tül doku"
+        },
+        {
+          "id": "noi-4",
+          "type": "image",
+          "url": "/images/products/noir-lace-balconette-bodysuit/noir-lace-balconette-bodysuit-4.jpg",
+          "alt": "Noir Bodysuit Ön Yakın Plan",
+          "caption": "Kirpik dantel göğüs kupları"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-NOI-XS",
+          "stock": 7
+        },
+        {
+          "size": "S",
+          "sku": "VSP-NOI-S",
+          "stock": 18
+        },
+        {
+          "size": "M",
+          "sku": "VSP-NOI-M",
+          "stock": 14
+        },
+        {
+          "size": "L",
+          "sku": "VSP-NOI-L",
+          "stock": 6
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-NOI-XL",
+          "stock": 2
+        }
+      ],
+      "createdAt": "2026-10-28T17:00:00Z"
+    },
+    {
+      "id": "prod-bella-vita",
+      "slug": "bella-vita-uzun-transparan-dantel-gece-elbisesi",
+      "name": "Bella Vita Uzun Transparan Dantel Gece Elbisesi",
+      "subtitle": "Boydan Boya Çiçekli İtalyan Danteli, Yırtmaçlı ve Balen Destekli Maxi Elbise",
+      "category": "babydoll-gecelik",
+      "categoryName": "Babydoll & Sabahlık",
+      "price": 2290,
+      "compareAtPrice": 2850,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": false,
+      "description": "Özel geceler ve kutlamalar için dramatik bir zarafet. Ayak bileklerine kadar uzanan transparan çiçek danteli, derin bacak yırtmacı ve balenli büstiyer kalıbıyla Bella Vita Maxi Elbise, siyah opera eldivenleriyle tamamlandığında unutulmaz bir aura yaratır.",
+      "fabricDetails": [
+        "%85 İtalyan Çiçekli Dantel, %15 Elastan",
+        "Derin bacak yırtmaçlı maxi boy silüet",
+        "Destekli balenli balkonet göğüs yapısı"
+      ],
+      "modelMeasurements": "Model Boy: 177 cm | Göğüs: 85, Bel: 60, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "bel-1",
+          "type": "image",
+          "url": "/images/products/bella-vita-lace-maxi-dress/bella-vita-lace-maxi-dress-1.jpg",
+          "alt": "Bella Vita Maxi Elbise Şezlong Pozu",
+          "caption": "Maxi boy transparan dantel akışı"
+        },
+        {
+          "id": "bel-2",
+          "type": "image",
+          "url": "/images/products/bella-vita-lace-maxi-dress/bella-vita-lace-maxi-dress-2.jpg",
+          "alt": "Bella Vita Elbise Kalp Balonlu Arka Poz",
+          "caption": "Derin sırt ve balenli büstiyer detayı"
+        },
+        {
+          "id": "bel-3",
+          "type": "image",
+          "url": "/images/products/bella-vita-lace-maxi-dress/bella-vita-lace-maxi-dress-3.jpg",
+          "alt": "Bella Vita Ayna Karşısı Duruş",
+          "caption": "Yırtmaç ve opera eldiveni uyumu"
+        },
+        {
+          "id": "bel-4",
+          "type": "image",
+          "url": "/images/products/bella-vita-lace-maxi-dress/bella-vita-lace-maxi-dress-4.jpg",
+          "alt": "Bella Vita Ayakta Boydan Silüet",
+          "caption": "Yere kadar uzanan çiçekli dantel etek"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-BEL-XS",
+          "stock": 3
+        },
+        {
+          "size": "S",
+          "sku": "VSP-BEL-S",
+          "stock": 11
+        },
+        {
+          "size": "M",
+          "sku": "VSP-BEL-M",
+          "stock": 8
+        },
+        {
+          "size": "L",
+          "sku": "VSP-BEL-L",
+          "stock": 3
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-BEL-XL",
+          "stock": 1
+        }
+      ],
+      "createdAt": "2026-10-28T18:00:00Z"
+    },
+    {
+      "id": "prod-madame-x",
+      "slug": "madame-x-balenli-saten-korse-bodysuit",
+      "name": "Madame X Balenli Saten Korse Bodysuit",
+      "subtitle": "Ağır Saten Yan Paneller, Dantel Göğüs & Kalça Volanları ile Kum Saati Silüeti",
+      "category": "bustiyer-korse",
+      "categoryName": "Büstiyer & Korse",
+      "price": 1980,
+      "compareAtPrice": 2450,
+      "currency": "TRY",
+      "spiceLevel": "daring",
+      "isFeatured": false,
+      "isNewArrival": false,
+      "isAfterDarkExclusive": true,
+      "description": "Geleneksel Fransız korsaj sanatından ilham alan Madame X; bel oyuntusunu toparlayan mat saten yan panelleri, transparan dantel ön paneli ve basen hattındaki mikro dantel volanlarıyla mükemmel kum saati proporsiyonu sunar.",
+      "fabricDetails": [
+        "%65 Mat Saten, %25 Fransız Danteli, %10 Spiral Balen",
+        "Bel oyuntusunu toparlayıcı 6 balenli iç karkas",
+        "Kalça üstü dantel fırfır bordürü"
+      ],
+      "modelMeasurements": "Model Boy: 175 cm | Göğüs: 86, Bel: 59, Kalça: 91 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "mdx-1",
+          "type": "image",
+          "url": "/images/products/madame-x-satin-corset-teddy/madame-x-satin-corset-teddy-1.jpg",
+          "alt": "Madame X Korse Sandalye Oturuşu",
+          "caption": "Kum saati formu veren saten ve dantel paneller"
+        },
+        {
+          "id": "mdx-2",
+          "type": "image",
+          "url": "/images/products/madame-x-satin-corset-teddy/madame-x-satin-corset-teddy-2.jpg",
+          "alt": "Madame X Ayakta Yakın Plan",
+          "caption": "Kalça dantel volanları ve balenli kuplar"
+        },
+        {
+          "id": "mdx-3",
+          "type": "image",
+          "url": "/images/products/madame-x-satin-corset-teddy/madame-x-satin-corset-teddy-3.jpg",
+          "alt": "Madame X Boydan Duruş ve Çorap Uyumu",
+          "caption": "Siyah jartiyer çoraplarıyla tam kombin"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-MDX-XS",
+          "stock": 4
+        },
+        {
+          "size": "S",
+          "sku": "VSP-MDX-S",
+          "stock": 12
+        },
+        {
+          "size": "M",
+          "sku": "VSP-MDX-M",
+          "stock": 9
+        },
+        {
+          "size": "L",
+          "sku": "VSP-MDX-L",
+          "stock": 4
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-MDX-XL",
+          "stock": 0
+        }
+      ],
+      "createdAt": "2026-10-28T19:00:00Z"
+    },
+    {
+      "id": "prod-passion-ruby",
+      "slug": "passion-kirpik-dantelli-kirmizi-jartiyer-takimi",
+      "name": "Passion Kirpik Dantelli Kırmızı Jartiyer Takımı",
+      "subtitle": "Alev Kırmızısı Kirpik Dantelli Balkonet Sütyen, Fiyonklu Jartiyer ve String Seti",
+      "category": "jartiyer-setleri",
+      "categoryName": "Jartiyer Takımları",
+      "price": 1850,
+      "compareAtPrice": 2300,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": true,
+      "isNewArrival": false,
+      "isAfterDarkExclusive": false,
+      "description": "Tutkunun en iddialı rengiyle hazırlanan Passion Set; transparan kırmızı dantel kupları, ayarlanabilir saten jartiyer askıları ve bel fiyonkuyla hem romantik yıl dönümleri hem de özel boudoir anları için vazgeçilmezdir.",
+      "fabricDetails": [
+        "%84 Fransız Danteli, %16 Likra",
+        "Balenli doğal dikleştirici balkonet kalıp",
+        "Ayarlanabilir metal jartiyer kilitleri"
+      ],
+      "modelMeasurements": "Model Boy: 174 cm | Göğüs: 85, Bel: 60, Kalça: 89 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "pas-1",
+          "type": "image",
+          "url": "/images/products/passion-ruby-garter-set/passion-ruby-garter-set-1.jpg",
+          "alt": "Passion Kırmızı Jartiyer Seti Yatak Pozu",
+          "caption": "Alev kırmızısı kirpik dantel kuplar"
+        },
+        {
+          "id": "pas-2",
+          "type": "image",
+          "url": "/images/products/passion-ruby-garter-set/passion-ruby-garter-set-2.jpg",
+          "alt": "Passion Set Yatak Üstü Duruş",
+          "caption": "Balkonet sütyen ve fiyonklu jartiyer"
+        },
+        {
+          "id": "pas-3",
+          "type": "image",
+          "url": "/images/products/passion-ruby-garter-set/passion-ruby-garter-set-3.jpg",
+          "alt": "Passion Set Ön Gövde Yakın Çekim",
+          "caption": "İnce saten kemer ve string detay"
+        },
+        {
+          "id": "pas-4",
+          "type": "image",
+          "url": "/images/products/passion-ruby-garter-set/passion-ruby-garter-set-4.jpg",
+          "alt": "Passion Set Arka Görünüm",
+          "caption": "Kırmızı dantel fırfırlı arka silüet"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-PAS-XS",
+          "stock": 6
+        },
+        {
+          "size": "S",
+          "sku": "VSP-PAS-S",
+          "stock": 17
+        },
+        {
+          "size": "M",
+          "sku": "VSP-PAS-M",
+          "stock": 12
+        },
+        {
+          "size": "L",
+          "sku": "VSP-PAS-L",
+          "stock": 5
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-PAS-XL",
+          "stock": 2
+        }
+      ],
+      "createdAt": "2026-10-28T20:00:00Z"
+    },
+    {
+      "id": "prod-velvet-secret",
+      "slug": "velvet-secret-pencereli-siyah-jartiyer-takimi",
+      "name": "Velvet Secret Pencereli Siyah Jartiyer Takımı",
+      "subtitle": "Dekolteli Balkonet Sütyen, Yan Bağlamalı Dantelli Jartiyer ve String Takımı",
+      "category": "jartiyer-setleri",
+      "categoryName": "Jartiyer Takımları",
+      "price": 1850,
+      "compareAtPrice": 2300,
+      "currency": "TRY",
+      "spiceLevel": "daring",
+      "isFeatured": false,
+      "isNewArrival": false,
+      "isAfterDarkExclusive": true,
+      "description": "Fransız couture esintili Velvet Secret; balenli dantel balkonet sütyeni ve yanlardan kurdeleyle bağlanan dantel kanatlı jartiyer kemeriyle gizemli ve kusursuz bir uyum sunar.",
+      "fabricDetails": [
+        "%80 Fransız Çiçekli Dantel, %20 Elastan",
+        "Yan bağlamalı kademeli jartiyer kemeri",
+        "Çıkarılabilir ve ayarlanabilir askılar"
+      ],
+      "modelMeasurements": "Model Boy: 176 cm | Göğüs: 86, Bel: 60, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "vel-1",
+          "type": "image",
+          "url": "/images/products/velvet-secret-cutout-garter-set/velvet-secret-cutout-garter-set-1.jpg",
+          "alt": "Velvet Secret Ayna Karşısı Ön Çekim",
+          "caption": "Balkonet kuplar ve yan bağlamalı jartiyer"
+        },
+        {
+          "id": "vel-2",
+          "type": "image",
+          "url": "/images/products/velvet-secret-cutout-garter-set/velvet-secret-cutout-garter-set-2.jpg",
+          "alt": "Velvet Secret Yakın Plan Açı",
+          "caption": "Dantel pencere ve string kesimi"
+        },
+        {
+          "id": "vel-3",
+          "type": "image",
+          "url": "/images/products/velvet-secret-cutout-garter-set/velvet-secret-cutout-garter-set-3.jpg",
+          "alt": "Velvet Secret Ayakta Duruş",
+          "caption": "Bel hattını saran jartiyer kanatları"
+        },
+        {
+          "id": "vel-4",
+          "type": "image",
+          "url": "/images/products/velvet-secret-cutout-garter-set/velvet-secret-cutout-garter-set-4.jpg",
+          "alt": "Velvet Secret Arka Görünüm",
+          "caption": "Sırt ve kalça dantel bordürü"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-VEL-XS",
+          "stock": 5
+        },
+        {
+          "size": "S",
+          "sku": "VSP-VEL-S",
+          "stock": 14
+        },
+        {
+          "size": "M",
+          "sku": "VSP-VEL-M",
+          "stock": 9
+        },
+        {
+          "size": "L",
+          "sku": "VSP-VEL-L",
+          "stock": 3
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-VEL-XL",
+          "stock": 1
+        }
+      ],
+      "createdAt": "2026-10-28T21:00:00Z"
+    },
+    {
+      "id": "prod-innocence-white",
+      "slug": "innocence-beyaz-firfirli-etekli-boudoir-seti",
+      "name": "Innocence Beyaz Fırfırlı Etekli Boudoir Seti",
+      "subtitle": "Büyük Saten Fiyonklu Balenli Göğüs Dekoltesi, Mini Fırfırlı Etek ve Choker Seti",
+      "category": "sutyen-takimlari",
+      "categoryName": "Sütyen & Fantezi Setler",
+      "price": 1550,
+      "compareAtPrice": 1890,
+      "currency": "TRY",
+      "spiceLevel": "romantic",
+      "isFeatured": false,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": false,
+      "description": "Masumiyet ve fantezi estetiğinin göz alıcı buluşması. Bembeyaz Fransız danteli, ön merkezde bağlanan dev ipek saten fiyonk, kristal taşlı beyaz choker tasma ve pileli mini dantel etekle tamamlanan özel gelin/boudoir seti.",
+      "fabricDetails": [
+        "%85 Kar Beyazı Fransız Danteli, %15 İpek Saten",
+        "Taşlı beyaz saten gerdanlık tasma dahil",
+        "Mini pileli fırfır etek ve uyumlu beyaz string"
+      ],
+      "modelMeasurements": "Model Boy: 175 cm | Göğüs: 84, Bel: 60, Kalça: 89 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "inn-1",
+          "type": "image",
+          "url": "/images/products/innocence-white-ruffle-boudoir-set/innocence-white-ruffle-boudoir-set-1.jpg",
+          "alt": "Innocence Beyaz Boudoir Seti Ön Yakın Plan",
+          "caption": "Büyük saten fiyonk ve taşlı gerdanlık"
+        },
+        {
+          "id": "inn-2",
+          "type": "image",
+          "url": "/images/products/innocence-white-ruffle-boudoir-set/innocence-white-ruffle-boudoir-set-2.jpg",
+          "alt": "Innocence Set Arka Görünüm",
+          "caption": "Dantel mini etek ve sırt kupları"
+        },
+        {
+          "id": "inn-3",
+          "type": "image",
+          "url": "/images/products/innocence-white-ruffle-boudoir-set/innocence-white-ruffle-boudoir-set-3.jpg",
+          "alt": "Innocence Set Boydan Duruş",
+          "caption": "Beyaz çorap kombinasyonuyla tam silüet"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-INN-XS",
+          "stock": 4
+        },
+        {
+          "size": "S",
+          "sku": "VSP-INN-S",
+          "stock": 11
+        },
+        {
+          "size": "M",
+          "sku": "VSP-INN-M",
+          "stock": 8
+        },
+        {
+          "size": "L",
+          "sku": "VSP-INN-L",
+          "stock": 2
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-INN-XL",
+          "stock": 1
+        }
+      ],
+      "createdAt": "2026-10-28T22:00:00Z"
+    },
+    {
+      "id": "prod-emerald-lace",
+      "slug": "emerald-zumrut-yesili-kirpik-dantelli-bodysuit",
+      "name": "Emerald Zümrüt Yeşili Kirpik Dantelli Bodysuit",
+      "subtitle": "Derin Zümrüt Yeşili Fransız Kirpik Danteli, Balen Destekli ve Sırt Dekolteli",
+      "category": "bodysuit-tulum",
+      "categoryName": "Bodysuit & Tulum",
+      "price": 1690,
+      "compareAtPrice": 2100,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": false,
+      "description": "Koleksiyonun en nadide renklerinden biri olan zümrüt yeşiliyle dokunan Emerald Bodysuit; ten rengiyle oluşturduğu asil kontrast, balenli kalıbı ve narin kirpik dantel paçalarıyla benzersiz bir boudoir lüksü vadeder.",
+      "fabricDetails": [
+        "%82 Zümrüt Yeşili Fransız Kirpik Danteli, %18 Elastan",
+        "Balenli dikleştirici kalıp",
+        "Derin sırt dekoltesi ve ayarlanabilir askılar"
+      ],
+      "modelMeasurements": "Model Boy: 176 cm | Göğüs: 85, Bel: 61, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "eme-1",
+          "type": "image",
+          "url": "/images/products/emerald-lace-underwire-bodysuit/emerald-lace-underwire-bodysuit-1.jpg",
+          "alt": "Emerald Zümrüt Bodysuit Uzanış Pozu",
+          "caption": "Zümrüt yeşili dantel dokusu ve balen kuplar"
+        },
+        {
+          "id": "eme-2",
+          "type": "image",
+          "url": "/images/products/emerald-lace-underwire-bodysuit/emerald-lace-underwire-bodysuit-2.jpg",
+          "alt": "Emerald Bodysuit Sırt ve Kalça Kesimi",
+          "caption": "Sırt penceresi ve kirpik fisto paça"
+        },
+        {
+          "id": "eme-3",
+          "type": "image",
+          "url": "/images/products/emerald-lace-underwire-bodysuit/emerald-lace-underwire-bodysuit-3.jpg",
+          "alt": "Emerald Bodysuit Ayna Çekimi",
+          "caption": "Bacak boyunu uzatan yüksek kalça kesimi"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-EME-XS",
+          "stock": 5
+        },
+        {
+          "size": "S",
+          "sku": "VSP-EME-S",
+          "stock": 13
+        },
+        {
+          "size": "M",
+          "sku": "VSP-EME-M",
+          "stock": 9
+        },
+        {
+          "size": "L",
+          "sku": "VSP-EME-L",
+          "stock": 4
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-EME-XL",
+          "stock": 2
+        }
+      ],
+      "createdAt": "2026-10-28T23:00:00Z"
+    },
+    {
+      "id": "prod-vesper-corset",
+      "slug": "vesper-celik-balenli-transparan-korse-eldiven-takimi",
+      "name": "Vesper Çelik Balenli Transparan Korse & Eldiven Takımı",
+      "subtitle": "Ön Kopçalı Çelik Balenli Korse, Dantel Opera Eldiveni ve File Çorap Seti (İmza Koleksiyon)",
+      "category": "bustiyer-korse",
+      "categoryName": "Büstiyer & Korse",
+      "price": 2650,
+      "compareAtPrice": 3250,
+      "currency": "TRY",
+      "spiceLevel": "daring",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": true,
+      "description": "Markamızın adını taşıyan imza tasarım Vesper Korse Seti; ön metal kopçalı çelik balenli transparan gövdesi, kirpik dantelli kupları, uyumlu dantel opera eldivenleri ve file jartiyer çoraplarıyla lüks boudoir zarafetinin doruk noktasıdır.",
+      "fabricDetails": [
+        "%70 Fransız Danteli, %20 Spiral Çelik Balen, %10 Saten",
+        "Ön metal kopçalı ve arka bağcıklı çift kademeli ayarlama",
+        "Dantel opera eldivenleri ve file çorap dahil tam takım"
+      ],
+      "modelMeasurements": "Model Boy: 177 cm | Göğüs: 87, Bel: 59, Kalça: 91 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "cor-1",
+          "type": "image",
+          "url": "/images/products/vesper-corset-opera-gloves-set/vesper-corset-opera-gloves-set-1.jpg",
+          "alt": "Vesper Çelik Balenli Korse Koltuk Pozu",
+          "caption": "Korse balenleri ve dantel opera eldiveni"
+        },
+        {
+          "id": "cor-vid",
+          "type": "video",
+          "url": "/videos/products/vesper-corset-opera-gloves-set/vesper-corset-loop.mp4",
+          "posterUrl": "/images/products/vesper-corset-opera-gloves-set/vesper-corset-opera-gloves-set-1.jpg",
+          "alt": "Vesper Korse Canlı Ayna Önü Video Loop",
+          "caption": "Korse hareket ve balen toparlama videosu"
+        },
+        {
+          "id": "cor-2",
+          "type": "image",
+          "url": "/images/products/vesper-corset-opera-gloves-set/vesper-corset-opera-gloves-set-2.jpg",
+          "alt": "Vesper Korse Altın Varaklı Ayna Önü",
+          "caption": "Ayna önü tam boy duruş"
+        },
+        {
+          "id": "cor-3",
+          "type": "image",
+          "url": "/images/products/vesper-corset-opera-gloves-set/vesper-corset-opera-gloves-set-3.jpg",
+          "alt": "Vesper Korse Ayakta Ön Yakın Plan",
+          "caption": "Ön metal kopçalar ve kirpik dantel kuplar"
+        },
+        {
+          "id": "cor-4",
+          "type": "image",
+          "url": "/images/products/vesper-corset-opera-gloves-set/vesper-corset-opera-gloves-set-4.jpg",
+          "alt": "Vesper Korse Koltuk Uzanış",
+          "caption": "Transparan tül ve çelik balen uyumu"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-COR-XS",
+          "stock": 3
+        },
+        {
+          "size": "S",
+          "sku": "VSP-COR-S",
+          "stock": 10
+        },
+        {
+          "size": "M",
+          "sku": "VSP-COR-M",
+          "stock": 7
+        },
+        {
+          "size": "L",
+          "sku": "VSP-COR-L",
+          "stock": 2
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-COR-XL",
+          "stock": 1
+        }
+      ],
+      "createdAt": "2026-10-29T00:00:00Z"
+    },
+    {
+      "id": "prod-sultana-black",
+      "slug": "sultana-siyah-dantel-bodysuit-sifon-kimono-seti",
+      "name": "Sultana Siyah Dantel Bodysuit & Şifon Kimono Seti",
+      "subtitle": "Derin V Yaka Dantel Bodysuit ve Uyumlu Dantel Manşetli Şifon Sabahlık Seti (2 Parça)",
+      "category": "bodysuit-tulum",
+      "categoryName": "Bodysuit & Tulum",
+      "price": 2190,
+      "compareAtPrice": 2750,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": false,
+      "isNewArrival": false,
+      "isAfterDarkExclusive": true,
+      "description": "Gecenin sakinliği ve asaleti. Derin V dekolteli dantel bodysuit üzerine geçirilen akışkan siyah şifon kimono; kol manşetlerindeki dantel bordürleri ve uçuşan hafifliğiyle kusursuz bir uyum oluşturur.",
+      "fabricDetails": [
+        "%100 Dökümlü Şeffaf İpek Şifon ve Fransız Danteli",
+        "Kuşaklı şifon kimono sabahlık dahil (2 Parça Takım)",
+        "Balensiz doğal göğüs dekoltesi"
+      ],
+      "modelMeasurements": "Model Boy: 176 cm | Göğüs: 86, Bel: 61, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "sul-1",
+          "type": "image",
+          "url": "/images/products/sultana-black-teddy-robe-set/sultana-black-teddy-robe-set-1.jpg",
+          "alt": "Sultana Siyah Takım KAWS Heykeli Yanı",
+          "caption": "Şifon kimono ve dantel bodysuit silüeti"
+        },
+        {
+          "id": "sul-2",
+          "type": "image",
+          "url": "/images/products/sultana-black-teddy-robe-set/sultana-black-teddy-robe-set-2.jpg",
+          "alt": "Sultana Takım Kanepe Uzanış",
+          "caption": "Derin V yaka dantel göğüs kesimi"
+        },
+        {
+          "id": "sul-3",
+          "type": "image",
+          "url": "/images/products/sultana-black-teddy-robe-set/sultana-black-teddy-robe-set-3.jpg",
+          "alt": "Sultana Takım Ayakta Boydan Duruş",
+          "caption": "Dantel manşetli şifon sabahlık dökümü"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-SUL-XS",
+          "stock": 4
+        },
+        {
+          "size": "S",
+          "sku": "VSP-SUL-S",
+          "stock": 12
+        },
+        {
+          "size": "M",
+          "sku": "VSP-SUL-M",
+          "stock": 8
+        },
+        {
+          "size": "L",
+          "sku": "VSP-SUL-L",
+          "stock": 3
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-SUL-XL",
+          "stock": 1
+        }
+      ],
+      "createdAt": "2026-10-29T01:00:00Z"
+    },
+    {
+      "id": "prod-royale-burgundy",
+      "slug": "royale-bordo-dantel-bodysuit-sifon-kimono-seti",
+      "name": "Royale Bordo Dantel Bodysuit & Şifon Kimono Seti",
+      "subtitle": "Şarap Bordosu Fransız Dantel Bodysuit ve Kuşaklı İpeksi Şifon Sabahlık Seti (2 Parça)",
+      "category": "bodysuit-tulum",
+      "categoryName": "Bodysuit & Tulum",
+      "price": 2190,
+      "compareAtPrice": 2750,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": false,
+      "description": "Koyu bordo tonunun asaletini şifonun hafifliğiyle harmanlayan Royale Set; dantel işlemeli bodysuit ve zarif şifon sabahlığıyla lüks boudoir zarafetini en sıcak tonlarda sunar.",
+      "fabricDetails": [
+        "%85 Fransız Danteli, %15 İpeksi Şifon",
+        "Şifon bağlama kuşağı dahil",
+        "2 Parça takım (Bodysuit + Sabahlık)"
+      ],
+      "modelMeasurements": "Model Boy: 175 cm | Göğüs: 85, Bel: 60, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "roy-1",
+          "type": "image",
+          "url": "/images/products/royale-burgundy-teddy-robe-set/royale-burgundy-teddy-robe-set-1.jpg",
+          "alt": "Royale Bordo Takım Merdiven Oturuşu",
+          "caption": "Şarap bordosu dantel ve şifon kimono"
+        },
+        {
+          "id": "roy-2",
+          "type": "image",
+          "url": "/images/products/royale-burgundy-teddy-robe-set/royale-burgundy-teddy-robe-set-2.jpg",
+          "alt": "Royale Bordo Takım Ayna Karşısı Diz Çöküş",
+          "caption": "Kuşaklı kimono ve göğüs dantel detayı"
+        },
+        {
+          "id": "roy-3",
+          "type": "image",
+          "url": "/images/products/royale-burgundy-teddy-robe-set/royale-burgundy-teddy-robe-set-3.jpg",
+          "alt": "Royale Bordo Takım Mutfak Adası Pozu",
+          "caption": "Uçuşan şifon kumaş ve zarafet"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-ROY-XS",
+          "stock": 5
+        },
+        {
+          "size": "S",
+          "sku": "VSP-ROY-S",
+          "stock": 14
+        },
+        {
+          "size": "M",
+          "sku": "VSP-ROY-M",
+          "stock": 9
+        },
+        {
+          "size": "L",
+          "sku": "VSP-ROY-L",
+          "stock": 4
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-ROY-XL",
+          "stock": 2
+        }
+      ],
+      "createdAt": "2026-10-29T02:00:00Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-1001",
+      "orderNumber": "VLR-84920",
+      "customer": {
+        "isGuest": true,
+        "fullName": "Selin Kaya",
+        "email": "selin.kaya@example.com",
+        "phone": "0532 410 88 92",
+        "city": "İstanbul",
+        "district": "Kadıköy",
+        "addressLine": "Moda Cad. Şair Nefi Sok. No: 14 D: 5",
+        "discreetPackagingConfirmed": true,
+        "giftMysteryNote": "Gece yarısı sürprizi 🖤"
+      },
+      "items": [
+        {
+          "productId": "prod-vesper-corset",
+          "slug": "vesper-celik-balenli-transparan-korse-eldiven-takimi",
+          "name": "Vesper Çelik Balenli Transparan Korse & Eldiven Takımı",
+          "price": 2650,
+          "size": "S",
+          "quantity": 1,
+          "imageUrl": "/images/products/vesper-corset-opera-gloves-set/vesper-corset-opera-gloves-set-1.jpg",
+          "maxStock": 10
+        }
+      ],
+      "subtotal": 2650,
+      "shippingCost": 0,
+      "totalAmount": 2650,
+      "paymentProvider": "iyzico",
+      "paymentTransactionId": "IYZ-99283741",
+      "installmentCount": 1,
+      "status": "preparing",
+      "createdAt": "2026-10-30T11:20:00Z"
+    },
+    {
+      "id": "ord-1002",
+      "orderNumber": "VLR-84915",
+      "customer": {
+        "isGuest": false,
+        "userId": "usr-1",
+        "fullName": "Ece Demir",
+        "email": "ece.demir@example.com",
+        "phone": "0544 219 30 11",
+        "city": "İzmir",
+        "district": "Karşıyaka",
+        "addressLine": "Bostanlı Mah. Cemal Gürsel Cad. No: 88 D: 12",
+        "discreetPackagingConfirmed": true
+      },
+      "items": [
+        {
+          "productId": "prod-nocturne-lace",
+          "slug": "nocturne-transparan-cicekli-dantel-babydoll",
+          "name": "Nocturne Transparan Çiçekli Dantel Babydoll Elbise",
+          "price": 1790,
+          "size": "M",
+          "quantity": 1,
+          "imageUrl": "/images/products/nocturne-lace-babydoll/nocturne-lace-babydoll-1.jpg",
+          "maxStock": 11
+        },
+        {
+          "productId": "prod-scarlet-lace",
+          "slug": "scarlet-kirpik-dantelli-balenli-bordo-bodysuit",
+          "name": "Scarlet Kirpik Dantelli Balenli Bordo Bodysuit",
+          "price": 1690,
+          "size": "S",
+          "quantity": 1,
+          "imageUrl": "/images/products/scarlet-lace-ruby-bodysuit/scarlet-lace-ruby-bodysuit-1.jpg",
+          "maxStock": 15
+        }
+      ],
+      "subtotal": 3480,
+      "shippingCost": 0,
+      "totalAmount": 3480,
+      "paymentProvider": "paytr",
+      "paymentTransactionId": "PTR-7731904",
+      "installmentCount": 3,
+      "status": "shipped_discreet",
+      "trackingCode": "YURTICI-908123441",
+      "createdAt": "2026-10-29T17:45:00Z"
+    }
+  ],
+  "updatedAt": "2026-10-31T02:34:27.358Z"
+}

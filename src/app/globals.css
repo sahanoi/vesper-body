@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root,
+[data-theme="daylight"] {
+  --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --bg-canvas: #faf6f3;
+  --bg-surface: #f3ece7;
+  --bg-elevated: #ffffff;
+  --text-primary: #1a1315;
+  --text-secondary: #68595e;
+  --border-subtle: #e5dad3;
+  --accent-primary: #7a1128;
+  --accent-hover: #5c0b1d;
+  --accent-gold: #b08d57;
+  --badge-bg: #efe4de;
+}
+
+[data-theme="after-dark"] {
+  --bg-canvas: #0c080a;
+  --bg-surface: #161013;
+  --bg-elevated: #1f161b;
+  --text-primary: #f6efe9;
+  --text-secondary: #b5a3aa;
+  --border-subtle: #2e2027;
+  --accent-primary: #b81d43;
+  --accent-hover: #d42852;
+  --accent-gold: #d4af37;
+  --badge-bg: #26181f;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-x: hidden;
+}
+
+.font-serif-editorial {
+  font-family: var(--font-serif);
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+
+/* Smooth Infinite Marquee Ticker for Top Announcement Bar */
+@keyframes vesper-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.vesper-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: vesper-marquee 34s linear infinite;
+}
+
+.vesper-marquee-track:hover {
+  animation-play-state: paused;
+}
