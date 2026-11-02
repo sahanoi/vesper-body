@@ -1,4 +1,4 @@
-# Lüks & Fantezi İç Giyim E-Ticaret Platformu — Mimari, UX ve Taslak Önerisi (Project H)
+# Lüks & Fantezi İç Giyim E-Ticaret Platformu — Mimari, UX ve Taslak Önerisi (VESPER BODY)
 
 > [!NOTE]
 > Bu doküman; referans alınan **Edde for Love (`eddeforlove.com`)** analizini, müşteri gereksinimlerini (video/hareketli görsel odaklı ürün sayfaları, misafir/üye alışverişi, ödeme altyapısı, stok/sipariş yönetimi, "naughty touch" dokunuşları) ve **Sanity.io** merkezli teknoloji yığını (tech stack) değerlendirmesini içerir.
