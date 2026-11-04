@@ -8,3 +8,7 @@
 - **Kalıcı Veritabanı (`src/app/api/store/route.ts` -> `src/data/database.json`):** Tüm 17 ürün ve siparişler sunucu diskinde JSON veritabanında tutulur.
 - **Dosya Yükleme API'si (`src/app/api/upload/route.ts`):** Bilgisayardan seçilen çoklu fotoğraf ve videoları doğrudan `public/` altındaki ürün klasörüne kaydeder.
 - **Tam Kapsamlı Ürün Düzenleme (`src/app/admin/page.tsx`):** İçe aktarılan 17 ürünün tamamı ile elle eklenen ürünler arasında %100 eşitlik sağlanmıştır (başlık, fiyat, kategori, açıklama, fotoğraf/video galerisi, kapak görseli seçimi, SKU ve beden stokları düzenlenebilir).
+
+## 3. Shopier REST API v1 (`osman`) & Upstash Bulut Veritabanı Entegrasyonu
+- **Shopier Ödeme API'si (`src/app/api/payment/shopier/route.ts` & `webhook/route.ts`):** `osman` adlı Kişisel Erişim Anahtarı (PAT - Mağaza ID: `2896109`) `.env.local` dosyasına güvenli şekilde tanımlanmış ve `/odeme` sayfasında varsayılan ödeme yöntemi olarak aktif edilmiştir.
+- **Upstash Redis / Vercel KV Bulut Veritabanı (`src/app/api/store/route.ts`):** Vercel üzerinden ücretsiz ve uyku moduna girmeyen bulut veritabanı bağlantısı hazır hale getirilmiştir.

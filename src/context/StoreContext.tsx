@@ -75,7 +75,7 @@ interface StoreContextType {
   orders: Order[];
   createOrder: (params: {
     customer: OrderCustomer;
-    paymentProvider: 'iyzico' | 'paytr';
+    paymentProvider: 'shopier' | 'iyzico' | 'paytr';
     installmentCount: number;
   }) => { ok: boolean; order?: Order; error?: string };
   updateOrderStatus: (
@@ -547,7 +547,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     installmentCount,
   }: {
     customer: OrderCustomer;
-    paymentProvider: 'iyzico' | 'paytr';
+    paymentProvider: 'shopier' | 'iyzico' | 'paytr';
     installmentCount: number;
   }): { ok: boolean; order?: Order; error?: string } => {
     if (cart.length === 0) {

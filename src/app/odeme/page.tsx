@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   Lock,
@@ -40,9 +40,9 @@ export default function CheckoutPage() {
   );
   const [mysteryNote, setMysteryNote] = useState(giftMysteryNote || '');
 
-  const [paymentProvider, setPaymentProvider] = useState<'iyzico' | 'paytr'>(
-    'iyzico'
-  );
+  const [paymentProvider, setPaymentProvider] = useState<
+    'shopier' | 'iyzico' | 'paytr'
+  >('shopier');
   const [installmentCount, setInstallmentCount] = useState<number>(1);
   const [cardHolder, setCardHolder] = useState('');
   const [cardNumber, setCardNumber] = useState('4543 •••• •••• 8812');
@@ -50,7 +50,31 @@ export default function CheckoutPage() {
   const [hygieneAccepted, setHygieneAccepted] = useState(true);
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
+  const [shopierPaymentUrl, setShopierPaymentUrl] = useState<string | null>(
+    null
+  );
+  const [shopierStatus, setShopierStatus] = useState<{
+    configured: boolean;
+    keyName: string;
+    shopId: number | string | null;
+  } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/payment/shopier')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.configured) {
+          setShopierStatus({
+            configured: true,
+            keyName: data.keyName || 'osman',
+            shopId: data.shopId || 2896109,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleQuickDemoMemberLogin = () => {
     loginUser('zeynep.aydin@example.com', 'Zeynep Aydın');
@@ -63,7 +87,7 @@ export default function CheckoutPage() {
     setAddressLine('Bebek Mah. Cevdetpaşa Cad. No: 42 D: 8');
   };
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -78,6 +102,12 @@ export default function CheckoutPage() {
       );
       return;
     }
+
+    setIsSubmitting(true);
+    const itemsSummary = cart
+      .map((i) => `${i.name} (${i.size} x${i.quantity})`)
+      .join(', ');
+    const firstImage = cart[0]?.imageUrl;
 
     const res = createOrder({
       customer: {
@@ -97,10 +127,35 @@ export default function CheckoutPage() {
     });
 
     if (!res.ok || !res.order) {
+      setIsSubmitting(false);
       setErrorMsg(res.error || 'Sipariş oluşturulurken bir hata oluştu.');
       return;
     }
 
+    if (paymentProvider === 'shopier') {
+      try {
+        const shopierRes = await fetch('/api/payment/shopier', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderNumber: res.order.orderNumber,
+            totalAmount: res.order.totalAmount,
+            customerName: fullName,
+            itemsSummary,
+            coverImageUrl: firstImage,
+          }),
+        });
+        const shopierData = await shopierRes.json();
+        if (shopierData?.paymentUrl) {
+          setShopierPaymentUrl(shopierData.paymentUrl);
+          window.open(shopierData.paymentUrl, '_blank', 'noopener,noreferrer');
+        }
+      } catch {
+        // Fallback to direct order screen if offline
+      }
+    }
+
+    setIsSubmitting(false);
     setCompletedOrder(res.order);
   };
 
@@ -158,6 +213,22 @@ export default function CheckoutPage() {
               </span>
             </div>
           </div>
+
+          {shopierPaymentUrl && (
+            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs space-y-2">
+              <p className="font-semibold text-emerald-500">
+                Shopier 3D Secure Ödeme Bağlantınız Hazır
+              </p>
+              <a
+                href={shopierPaymentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-5 py-2.5 rounded-full bg-emerald-600 text-white font-semibold"
+              >
+                Shopier Ödeme Sayfasını Aç →
+              </a>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link
@@ -350,34 +421,52 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Step 3: Payment Gateway (iyzico / PayTR) */}
+            {/* Step 3: Payment Gateway (Shopier / iyzico / PayTR) */}
             <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wider">
-                  3. Ödeme Altyapısı (3D Secure)
-                </h2>
-                <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h2 className="text-sm font-semibold uppercase tracking-wider">
+                    3. Ödeme Altyapısı (3D Secure)
+                  </h2>
+                  {shopierStatus?.configured && (
+                    <p className="text-[11px] text-emerald-500 font-medium mt-0.5">
+                      ✓ Shopier API Aktif (Anahtar: {shopierStatus.keyName} • Mağaza #{shopierStatus.shopId})
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentProvider('shopier')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer ${
+                      paymentProvider === 'shopier'
+                        ? 'bg-[#28C76F] text-white border-[#28C76F]'
+                        : 'border-[var(--border-subtle)]'
+                    }`}
+                  >
+                    Shopier 3D Secure
+                  </button>
                   <button
                     type="button"
                     onClick={() => setPaymentProvider('iyzico')}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold border cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer ${
                       paymentProvider === 'iyzico'
                         ? 'bg-[#1E64FF] text-white border-[#1E64FF]'
                         : 'border-[var(--border-subtle)]'
                     }`}
                   >
-                    iyzico Korumalı Ödeme
+                    iyzico
                   </button>
                   <button
                     type="button"
                     onClick={() => setPaymentProvider('paytr')}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold border cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer ${
                       paymentProvider === 'paytr'
                         ? 'bg-[#002B5C] text-white border-[#002B5C]'
                         : 'border-[var(--border-subtle)]'
                     }`}
                   >
-                    PayTR 3D POS
+                    PayTR
                   </button>
                 </div>
               </div>
@@ -528,12 +617,20 @@ export default function CheckoutPage() {
 
               <button
                 type="submit"
-                className="w-full py-4 px-6 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+                disabled={isSubmitting}
+                className="w-full py-4 px-6 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] disabled:opacity-60 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
               >
                 <CreditCard className="w-4 h-4" />
                 <span>
-                  {paymentProvider === 'iyzico' ? 'iyzico' : 'PayTR'} ile{' '}
-                  {(cartSubtotal + shippingCost).toLocaleString('tr-TR')} TL Öde
+                  {isSubmitting
+                    ? 'Shopier Güvenli Ödeme Hazırlanıyor...'
+                    : `${
+                        paymentProvider === 'shopier'
+                          ? 'Shopier'
+                          : paymentProvider === 'iyzico'
+                          ? 'iyzico'
+                          : 'PayTR'
+                      } ile ${(cartSubtotal + shippingCost).toLocaleString('tr-TR')} TL Öde`}
                 </span>
               </button>
 

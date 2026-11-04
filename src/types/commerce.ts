@@ -85,7 +85,7 @@ export interface Order {
   subtotal: number;
   shippingCost: number;
   totalAmount: number;
-  paymentProvider: 'iyzico' | 'paytr';
+  paymentProvider: 'shopier' | 'iyzico' | 'paytr';
   paymentTransactionId: string;
   installmentCount: number;
   status: OrderStatus;

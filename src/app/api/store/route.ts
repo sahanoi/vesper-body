@@ -7,6 +7,62 @@ import { Order, Product, StoreUser } from '@/types/commerce';
 
 const LOCAL_DB_PATH = path.join(process.cwd(), 'src', 'data', 'database.json');
 const TMP_DB_PATH = path.join(os.tmpdir(), 'vesper-database.json');
+const CLOUD_KV_KEY = 'vesper_store_db_v1';
+
+function getCloudKvConfig(): { url: string; token: string } | null {
+  const url =
+    process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+  const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+  if (url && token) {
+    return { url: url.replace(/\/$/, ''), token };
+  }
+  return null;
+}
+
+async function readCloudKv(): Promise<DatabaseSchema | null> {
+  const kv = getCloudKvConfig();
+  if (!kv) return null;
+  try {
+    const res = await fetch(`${kv.url}/get/${CLOUD_KV_KEY}`, {
+      headers: { Authorization: `Bearer ${kv.token}` },
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data?.result) return null;
+    const parsed =
+      typeof data.result === 'string'
+        ? (JSON.parse(data.result) as DatabaseSchema)
+        : (data.result as DatabaseSchema);
+    if (Array.isArray(parsed.products) && parsed.products.length > 0) {
+      if (!Array.isArray(parsed.users) || parsed.users.length === 0) {
+        parsed.users = INITIAL_USERS;
+      }
+      return parsed;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function writeCloudKv(db: DatabaseSchema): Promise<void> {
+  const kv = getCloudKvConfig();
+  if (!kv) return;
+  try {
+    await fetch(`${kv.url}/set/${CLOUD_KV_KEY}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${kv.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(db),
+    });
+  } catch (err) {
+    console.error('Cloud KV write error:', err);
+  }
+}
 
 export interface DatabaseSchema {
   products: Product[];
@@ -43,7 +99,14 @@ const INITIAL_USERS: StoreUser[] = [
 
 let memoryCache: DatabaseSchema | null = null;
 
-function readDatabase(): DatabaseSchema {
+async function readDatabase(): Promise<DatabaseSchema> {
+  // 0. Check Upstash Redis / Vercel KV Cloud Database first (Production)
+  const cloudDb = await readCloudKv();
+  if (cloudDb) {
+    memoryCache = cloudDb;
+    return cloudDb;
+  }
+
   // 1. Check /tmp override first (for Vercel serverless runtime writes)
   try {
     if (fs.existsSync(TMP_DB_PATH)) {
@@ -87,14 +150,17 @@ function readDatabase(): DatabaseSchema {
     updatedAt: new Date().toISOString(),
   };
 
-  writeDatabase(initialDb);
+  await writeDatabase(initialDb);
   return initialDb;
 }
 
-function writeDatabase(db: DatabaseSchema): void {
+async function writeDatabase(db: DatabaseSchema): Promise<void> {
   db.updatedAt = new Date().toISOString();
   memoryCache = db;
   const serialized = JSON.stringify(db, null, 2);
+
+  // 0. Write to Upstash Redis / Vercel KV if configured
+  await writeCloudKv(db);
 
   // Try writing to project src/data/database.json (works locally)
   try {
@@ -114,30 +180,30 @@ function writeDatabase(db: DatabaseSchema): void {
 }
 
 export async function GET() {
-  const db = readDatabase();
+  const db = await readDatabase();
   return NextResponse.json(db);
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const db = readDatabase();
+    const db = await readDatabase();
 
     if (body.action === 'reset_catalog') {
       db.products = INITIAL_PRODUCTS;
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({ ok: true, products: db.products });
     }
 
     if (body.action === 'sync_products' && Array.isArray(body.products)) {
       db.products = body.products;
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({ ok: true, products: db.products });
     }
 
     if (body.action === 'add_product' && body.product) {
       db.products = [body.product, ...db.products];
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({ ok: true, products: db.products });
     }
 
@@ -146,20 +212,20 @@ export async function POST(req: NextRequest) {
       db.products = db.products.map((p) =>
         p.id === updatedProd.id ? updatedProd : p
       );
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({ ok: true, products: db.products });
     }
 
     if (body.action === 'delete_product' && body.productId) {
       db.products = db.products.filter((p) => p.id !== body.productId);
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({ ok: true, products: db.products });
     }
 
     if (body.action === 'create_order' && body.order && Array.isArray(body.products)) {
       db.products = body.products;
       db.orders = [body.order, ...db.orders];
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({
         ok: true,
         products: db.products,
@@ -169,7 +235,7 @@ export async function POST(req: NextRequest) {
 
     if (body.action === 'update_orders' && Array.isArray(body.orders)) {
       db.orders = body.orders;
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({ ok: true, orders: db.orders });
     }
 
@@ -185,7 +251,7 @@ export async function POST(req: NextRequest) {
         );
       }
       db.users = [newUser, ...db.users];
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({ ok: true, users: db.users, user: newUser });
     }
 
@@ -202,7 +268,7 @@ export async function POST(req: NextRequest) {
         ...db.users[idx],
         password: String(body.newPassword),
       };
-      writeDatabase(db);
+      await writeDatabase(db);
       return NextResponse.json({ ok: true, users: db.users });
     }
 

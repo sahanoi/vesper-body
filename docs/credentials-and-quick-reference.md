@@ -48,7 +48,8 @@ Müşterilerin sisteme kayıt olmadan veya şifre girmeden sipariş verebildiği
 | **GitHub Kullanıcı / Repo** | `https://github.com/sahanoi/vesper-body.git` |
 | **Ücretsiz Kargo Limiti** | 1.500 TL |
 | **Standart Kargo Ücreti** | 89 TL |
-| **Ödeme Simülasyonu** | iyzico & PayTR (3D Secure + Taksit Seçenekleri) |
+| **Ödeme Altyapısı** | **Shopier REST API v1** (Anahtar: `osman` • Mağaza `#2896109`) + iyzico & PayTR |
+| **Canlı Veritabanı Desteği** | Lokal: `src/data/database.json` • Bulut: **Upstash Redis (Vercel KV)** |
 
 ---
 
