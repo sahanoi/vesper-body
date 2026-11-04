@@ -57,7 +57,7 @@ interface StoreContextType {
   authenticateUser: (
     email: string,
     password: string
-  ) => { ok: boolean; error?: string };
+  ) => Promise<{ ok: boolean; error?: string }>;
   registerUser: (params: {
     fullName: string;
     email: string;
@@ -68,7 +68,7 @@ interface StoreContextType {
     email: string,
     newPassword: string
   ) => Promise<{ ok: boolean; error?: string }>;
-  loginAdmin: (email: string, password: string) => boolean;
+  loginAdmin: (email: string, password: string) => Promise<boolean>;
   logoutUser: () => void;
 
   // Orders & Checkout
@@ -395,43 +395,38 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const authenticateUser = (
+  const authenticateUser = async (
     email: string,
     password: string
-  ): { ok: boolean; error?: string } => {
+  ): Promise<{ ok: boolean; error?: string }> => {
     const cleanEmail = email.trim().toLowerCase();
-    if (
-      (cleanEmail === 'admin@vesperbody.com' || cleanEmail === 'admin') &&
-      (password === 'vesper2026' || password === 'admin123')
-    ) {
-      setCurrentUser({
-        id: 'usr-admin-1',
-        email: 'admin@vesperbody.com',
-        fullName: 'VESPER Mağaza Yöneticisi',
-        phone: '0532 100 00 00',
-        isAdmin: true,
+    try {
+      const res = await fetch('/api/store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'authenticate_user',
+          email: cleanEmail,
+          password,
+        }),
       });
+      const data = await res.json();
+      if (!res.ok || !data.ok || !data.user) {
+        return {
+          ok: false,
+          error:
+            data.error ||
+            'E-posta adresi veya şifre hatalı. Lütfen kontrol edin.',
+        };
+      }
+      setCurrentUser(data.user);
       return { ok: true };
-    }
-
-    const found = users.find((u) => u.email.toLowerCase() === cleanEmail);
-    if (!found) {
+    } catch {
       return {
         ok: false,
-        error:
-          'Bu e-posta adresine ait hesap bulunamadı. Lütfen önce "Kayıt Ol" ile hesap oluşturun.',
+        error: 'Sunucu bağlantı hatası oluştu.',
       };
     }
-
-    if (found.password && found.password !== password) {
-      return {
-        ok: false,
-        error: 'Girdiğiniz şifre hatalı. Şifrenizi unuttuysanız sıfırlayabilirsiniz.',
-      };
-    }
-
-    setCurrentUser(found);
-    return { ok: true };
   };
 
   const registerUser = async ({
@@ -459,7 +454,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       email: cleanEmail,
       phone: phone.trim() || '0532 000 00 00',
       password,
-      isAdmin: cleanEmail === 'admin@vesperbody.com',
+      isAdmin: false,
       createdAt: new Date().toISOString(),
     };
 
@@ -475,15 +470,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       }
       if (Array.isArray(data.users)) {
         setUsers(data.users);
-      } else {
-        setUsers((prev) => [newUser, ...prev]);
       }
+      if (data.user) {
+        setCurrentUser(data.user);
+      }
+      return { ok: true };
     } catch {
-      setUsers((prev) => [newUser, ...prev]);
+      return { ok: false, error: 'Sunucu bağlantı hatası.' };
     }
-
-    setCurrentUser(newUser);
-    return { ok: true };
   };
 
   const resetUserPassword = async (
@@ -519,26 +513,21 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loginAdmin = (email: string, password: string): boolean => {
-    const cleanEmail = email.trim().toLowerCase();
-    if (
-      (cleanEmail === 'admin@vesperbody.com' || cleanEmail === 'admin') &&
-      (password === 'vesper2026' || password === 'admin123')
-    ) {
-      setCurrentUser({
-        id: 'usr-admin-1',
-        email: 'admin@vesperbody.com',
-        fullName: 'VESPER Mağaza Yöneticisi',
-        phone: '0532 100 00 00',
-        isAdmin: true,
-      });
-      return true;
-    }
-    return false;
+  const loginAdmin = async (
+    email: string,
+    password: string
+  ): Promise<boolean> => {
+    const res = await authenticateUser(email, password);
+    return res.ok;
   };
 
   const logoutUser = () => {
     setCurrentUser(null);
+    fetch('/api/store', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'logout_user' }),
+    }).catch(() => {});
   };
 
   const createOrder = ({

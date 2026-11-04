@@ -75,8 +75,8 @@ export default function AdminDashboardPage() {
     logoutUser,
   } = useStore();
 
-  const [adminEmail, setAdminEmail] = useState('admin@vesperbody.com');
-  const [adminPassword, setAdminPassword] = useState('vesper2026');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
   const [adminLoginError, setAdminLoginError] = useState('');
 
   const [activeTab, setActiveTab] = useState<
@@ -270,9 +270,9 @@ export default function AdminDashboardPage() {
     }, 900);
   };
 
-  const handleAdminLoginSubmit = (e: React.FormEvent) => {
+  const handleAdminLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = loginAdmin(adminEmail, adminPassword);
+    const ok = await loginAdmin(adminEmail, adminPassword);
     if (!ok) {
       setAdminLoginError('Yönetici e-posta veya şifresi hatalı.');
     } else {

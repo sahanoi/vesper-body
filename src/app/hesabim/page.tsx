@@ -59,7 +59,7 @@ export default function AccountPage() {
     setAuthView(nextView);
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
@@ -69,7 +69,9 @@ export default function AccountPage() {
       return;
     }
 
-    const res = authenticateUser(loginEmail, loginPassword);
+    setLoading(true);
+    const res = await authenticateUser(loginEmail, loginPassword);
+    setLoading(false);
     if (!res.ok) {
       setErrorMsg(res.error || 'Giriş yapılamadı.');
     }

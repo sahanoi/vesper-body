@@ -139,10 +139,12 @@ export default function CheckoutPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             orderNumber: res.order.orderNumber,
-            totalAmount: res.order.totalAmount,
             customerName: fullName,
-            itemsSummary,
-            coverImageUrl: firstImage,
+            items: res.order.items.map((item) => ({
+              productId: item.productId,
+              size: item.size,
+              quantity: item.quantity,
+            })),
           }),
         });
         const shopierData = await shopierRes.json();

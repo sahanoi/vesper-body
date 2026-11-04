@@ -1,193 +1,140 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import { INITIAL_ORDERS, INITIAL_PRODUCTS } from '@/data/initial-catalog';
+import { INITIAL_PRODUCTS } from '@/data/initial-catalog';
 import { Order, Product, StoreUser } from '@/types/commerce';
+import {
+  getAdminExpectedPassword,
+  readDatabase,
+  stripPasswords,
+  writeDatabase,
+} from '@/lib/database';
+import {
+  ADMIN_COOKIE_NAME,
+  checkRateLimit,
+  createAdminSessionToken,
+  hashPassword,
+  safeCompare,
+  sanitizeText,
+  verifyAdminSessionFromRequest,
+  verifyUserPassword,
+} from '@/lib/security';
 
-const LOCAL_DB_PATH = path.join(process.cwd(), 'src', 'data', 'database.json');
-const TMP_DB_PATH = path.join(os.tmpdir(), 'vesper-database.json');
-const CLOUD_KV_KEY = 'vesper_store_db_v1';
+const FREE_SHIPPING_THRESHOLD = 1500;
+const STANDARD_SHIPPING_COST = 89;
 
-function getCloudKvConfig(): { url: string; token: string } | null {
-  const url =
-    process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
-  const token =
-    process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
-  if (url && token) {
-    return { url: url.replace(/\/$/, ''), token };
-  }
-  return null;
-}
-
-async function readCloudKv(): Promise<DatabaseSchema | null> {
-  const kv = getCloudKvConfig();
-  if (!kv) return null;
-  try {
-    const res = await fetch(`${kv.url}/get/${CLOUD_KV_KEY}`, {
-      headers: { Authorization: `Bearer ${kv.token}` },
-      cache: 'no-store',
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!data?.result) return null;
-    const parsed =
-      typeof data.result === 'string'
-        ? (JSON.parse(data.result) as DatabaseSchema)
-        : (data.result as DatabaseSchema);
-    if (Array.isArray(parsed.products) && parsed.products.length > 0) {
-      if (!Array.isArray(parsed.users) || parsed.users.length === 0) {
-        parsed.users = INITIAL_USERS;
-      }
-      return parsed;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-async function writeCloudKv(db: DatabaseSchema): Promise<void> {
-  const kv = getCloudKvConfig();
-  if (!kv) return;
-  try {
-    await fetch(`${kv.url}/set/${CLOUD_KV_KEY}`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${kv.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(db),
-    });
-  } catch (err) {
-    console.error('Cloud KV write error:', err);
-  }
-}
-
-export interface DatabaseSchema {
-  products: Product[];
-  orders: Order[];
-  users: StoreUser[];
-  updatedAt: string;
-}
-
-const INITIAL_USERS: StoreUser[] = [
-  {
-    id: 'usr-admin-1',
-    fullName: 'VESPER Mağaza Yöneticisi',
-    email: 'admin@vesperbody.com',
-    phone: '0532 100 00 00',
-    password: 'vesper2026',
-    isAdmin: true,
-    createdAt: '2026-10-28T09:00:00Z',
-  },
-  {
-    id: 'usr-1',
-    fullName: 'Ece Demir',
-    email: 'ece.demir@example.com',
-    phone: '0544 219 30 11',
-    password: '123456',
-    isAdmin: false,
-    createdAt: '2026-10-29T14:00:00Z',
-    savedAddress: {
-      city: 'İzmir',
-      district: 'Karşıyaka',
-      addressLine: 'Bostanlı Mah. Cemal Gürsel Cad. No: 88 D: 12',
-    },
-  },
-];
-
-let memoryCache: DatabaseSchema | null = null;
-
-async function readDatabase(): Promise<DatabaseSchema> {
-  // 0. Check Upstash Redis / Vercel KV Cloud Database first (Production)
-  const cloudDb = await readCloudKv();
-  if (cloudDb) {
-    memoryCache = cloudDb;
-    return cloudDb;
-  }
-
-  // 1. Check /tmp override first (for Vercel serverless runtime writes)
-  try {
-    if (fs.existsSync(TMP_DB_PATH)) {
-      const raw = fs.readFileSync(TMP_DB_PATH, 'utf-8');
-      const parsed = JSON.parse(raw) as DatabaseSchema;
-      if (Array.isArray(parsed.products) && parsed.products.length > 0) {
-        if (!Array.isArray(parsed.users) || parsed.users.length === 0) {
-          parsed.users = INITIAL_USERS;
-        }
-        memoryCache = parsed;
-        return parsed;
-      }
-    }
-  } catch {
-    // ignore tmp read errors
-  }
-
-  // 2. Check local workspace src/data/database.json
-  try {
-    if (fs.existsSync(LOCAL_DB_PATH)) {
-      const raw = fs.readFileSync(LOCAL_DB_PATH, 'utf-8');
-      const parsed = JSON.parse(raw) as DatabaseSchema;
-      if (Array.isArray(parsed.products) && parsed.products.length > 0) {
-        if (!Array.isArray(parsed.users) || parsed.users.length === 0) {
-          parsed.users = INITIAL_USERS;
-        }
-        memoryCache = parsed;
-        return parsed;
-      }
-    }
-  } catch (err) {
-    console.error('Error reading database.json, falling back:', err);
-  }
-
-  if (memoryCache) return memoryCache;
-
-  const initialDb: DatabaseSchema = {
-    products: INITIAL_PRODUCTS,
-    orders: INITIAL_ORDERS,
-    users: INITIAL_USERS,
-    updatedAt: new Date().toISOString(),
-  };
-
-  await writeDatabase(initialDb);
-  return initialDb;
-}
-
-async function writeDatabase(db: DatabaseSchema): Promise<void> {
-  db.updatedAt = new Date().toISOString();
-  memoryCache = db;
-  const serialized = JSON.stringify(db, null, 2);
-
-  // 0. Write to Upstash Redis / Vercel KV if configured
-  await writeCloudKv(db);
-
-  // Try writing to project src/data/database.json (works locally)
-  try {
-    const dir = path.dirname(LOCAL_DB_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(LOCAL_DB_PATH, serialized, 'utf-8');
-  } catch {
-    // On Vercel (EROFS read-only file system), write to /tmp/vesper-database.json
-    try {
-      fs.writeFileSync(TMP_DB_PATH, serialized, 'utf-8');
-    } catch (tmpErr) {
-      console.error('Fallback tmp write error:', tmpErr);
-    }
-  }
-}
-
-export async function GET() {
+export async function GET(req: NextRequest) {
   const db = await readDatabase();
-  return NextResponse.json(db);
+  const isAdminVerified = verifyAdminSessionFromRequest(req);
+
+  return NextResponse.json({
+    products: db.products,
+    orders: db.orders,
+    users: stripPasswords(db.users),
+    isAdminSessionValid: isAdminVerified,
+    updatedAt: db.updatedAt,
+  });
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const db = await readDatabase();
+    const isAdminVerified = verifyAdminSessionFromRequest(req);
+
+    // 1. Server-Side Authentication (Login for Member or Admin)
+    if (body.action === 'authenticate_user') {
+      const rl = checkRateLimit(req, 'auth_login', 10, 5 * 60 * 1000);
+      if (!rl.allowed) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: `Çok fazla başarısız giriş denemesi. Lütfen ${rl.retryAfterSec} saniye sonra tekrar deneyin.`,
+          },
+          { status: 429 }
+        );
+      }
+
+      const email = String(body.email || '')
+        .trim()
+        .toLowerCase();
+      const password = String(body.password || '');
+
+      const expectedAdminPass = getAdminExpectedPassword();
+      if (
+        (email === 'admin@vesperbody.com' || email === 'admin') &&
+        safeCompare(password, expectedAdminPass)
+      ) {
+        const adminUser: StoreUser = {
+          id: 'usr-admin-1',
+          email: 'admin@vesperbody.com',
+          fullName: 'VESPER Mağaza Yöneticisi',
+          phone: '0532 100 00 00',
+          isAdmin: true,
+        };
+        const token = createAdminSessionToken(adminUser.email);
+        const res = NextResponse.json({ ok: true, user: adminUser });
+        res.cookies.set(ADMIN_COOKIE_NAME, token, {
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production',
+          path: '/',
+          maxAge: 24 * 60 * 60,
+        });
+        return res;
+      }
+
+      const found = db.users.find((u) => u.email.toLowerCase() === email);
+      if (!found || !verifyUserPassword(password, found.password)) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'E-posta adresi veya şifre hatalı.',
+          },
+          { status: 401 }
+        );
+      }
+
+      const { password: _pwd, ...safeUser } = found;
+      const res = NextResponse.json({ ok: true, user: safeUser });
+      if (safeUser.isAdmin) {
+        const token = createAdminSessionToken(safeUser.email);
+        res.cookies.set(ADMIN_COOKIE_NAME, token, {
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production',
+          path: '/',
+          maxAge: 24 * 60 * 60,
+        });
+      }
+      return res;
+    }
+
+    // 2. Logout (Clears HttpOnly Admin Cookie)
+    if (body.action === 'logout_user') {
+      const res = NextResponse.json({ ok: true });
+      res.cookies.delete(ADMIN_COOKIE_NAME);
+      return res;
+    }
+
+    // 3. Admin-Only Protected Actions (Requires Verified HttpOnly Session Cookie)
+    const adminActions = [
+      'reset_catalog',
+      'sync_products',
+      'add_product',
+      'update_product',
+      'delete_product',
+      'update_orders',
+    ];
+
+    if (adminActions.includes(body.action) && !isAdminVerified) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            'Yetkisiz işlem (401): Bu işlemi yapmak için Yönetici girişi yapmalısınız.',
+        },
+        { status: 401 }
+      );
+    }
 
     if (body.action === 'reset_catalog') {
       db.products = INITIAL_PRODUCTS;
@@ -222,54 +169,205 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, products: db.products });
     }
 
-    if (body.action === 'create_order' && body.order && Array.isArray(body.products)) {
-      db.products = body.products;
-      db.orders = [body.order, ...db.orders];
-      await writeDatabase(db);
-      return NextResponse.json({
-        ok: true,
-        products: db.products,
-        orders: db.orders,
-      });
-    }
-
     if (body.action === 'update_orders' && Array.isArray(body.orders)) {
       db.orders = body.orders;
       await writeDatabase(db);
       return NextResponse.json({ ok: true, orders: db.orders });
     }
 
-    if (body.action === 'register_user' && body.user) {
-      const newUser: StoreUser = body.user;
-      const exists = db.users.some(
-        (u) => u.email.toLowerCase() === newUser.email.toLowerCase()
-      );
-      if (exists) {
+    // 4. Customer Order Creation (Server-Side Authoritative Price & Stock Calculation)
+    if (body.action === 'create_order' && body.order) {
+      const rl = checkRateLimit(req, 'create_order', 15, 5 * 60 * 1000);
+      if (!rl.allowed) {
         return NextResponse.json(
-          { ok: false, error: 'Bu e-posta adresi ile kayıtlı bir hesap zaten var.' },
+          { ok: false, error: 'Çok fazla sipariş isteği gönderildi.' },
+          { status: 429 }
+        );
+      }
+
+      const incomingOrder: Order = body.order;
+      if (
+        !Array.isArray(incomingOrder.items) ||
+        incomingOrder.items.length === 0
+      ) {
+        return NextResponse.json(
+          { ok: false, error: 'Sipariş sepeti boş olamaz.' },
           { status: 400 }
         );
       }
-      db.users = [newUser, ...db.users];
+
+      let verifiedSubtotal = 0;
+      const verifiedItems = [];
+
+      for (const item of incomingOrder.items) {
+        const dbProd = db.products.find((p) => p.id === item.productId);
+        const dbVariant = dbProd?.variants.find((v) => v.size === item.size);
+        const qty = Math.max(
+          1,
+          Math.min(20, Math.floor(Number(item.quantity) || 1))
+        );
+
+        if (!dbProd || !dbVariant || dbVariant.stock < qty) {
+          return NextResponse.json(
+            {
+              ok: false,
+              error: `${item.name} (${item.size}) için sunucuda yeterli stok kalmadı.`,
+            },
+            { status: 400 }
+          );
+        }
+
+        dbVariant.stock -= qty;
+        verifiedSubtotal += dbProd.price * qty;
+        verifiedItems.push({
+          ...item,
+          name: dbProd.name,
+          price: dbProd.price,
+          quantity: qty,
+        });
+      }
+
+      const verifiedShipping =
+        verifiedSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
+      const verifiedTotal = verifiedSubtotal + verifiedShipping;
+
+      const safeOrder: Order = {
+        ...incomingOrder,
+        customer: {
+          ...incomingOrder.customer,
+          fullName: sanitizeText(incomingOrder.customer?.fullName, 120),
+          email: sanitizeText(incomingOrder.customer?.email, 150),
+          phone: sanitizeText(incomingOrder.customer?.phone, 40),
+          city: sanitizeText(incomingOrder.customer?.city, 60),
+          district: sanitizeText(incomingOrder.customer?.district, 60),
+          addressLine: sanitizeText(incomingOrder.customer?.addressLine, 350),
+          giftMysteryNote: incomingOrder.customer?.giftMysteryNote
+            ? sanitizeText(incomingOrder.customer.giftMysteryNote, 250)
+            : undefined,
+        },
+        items: verifiedItems,
+        subtotal: verifiedSubtotal,
+        shippingCost: verifiedShipping,
+        totalAmount: verifiedTotal,
+      };
+
+      db.orders = [safeOrder, ...db.orders];
       await writeDatabase(db);
-      return NextResponse.json({ ok: true, users: db.users, user: newUser });
+      return NextResponse.json({
+        ok: true,
+        order: safeOrder,
+        products: db.products,
+        orders: db.orders,
+      });
     }
 
+    // 5. Public Customer Registration (Prevents Admin Escalation + Hashes Password)
+    if (body.action === 'register_user' && body.user) {
+      const rl = checkRateLimit(req, 'register_user', 8, 10 * 60 * 1000);
+      if (!rl.allowed) {
+        return NextResponse.json(
+          { ok: false, error: 'Çok fazla kayıt denemesi. Lütfen bekleyin.' },
+          { status: 429 }
+        );
+      }
+
+      const rawUser: StoreUser = body.user;
+      const cleanEmail = sanitizeText(rawUser.email, 150).toLowerCase();
+
+      if (cleanEmail === 'admin@vesperbody.com' || cleanEmail === 'admin') {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Bu e-posta adresi sistem tarafından korunmaktadır.',
+          },
+          { status: 403 }
+        );
+      }
+
+      const exists = db.users.some(
+        (u) => u.email.toLowerCase() === cleanEmail
+      );
+      if (exists) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Bu e-posta adresi ile kayıtlı bir hesap zaten var.',
+          },
+          { status: 400 }
+        );
+      }
+
+      const plainPassword = String(rawUser.password || '');
+      if (plainPassword.length < 6) {
+        return NextResponse.json(
+          { ok: false, error: 'Şifreniz en az 6 karakter olmalıdır.' },
+          { status: 400 }
+        );
+      }
+
+      const newUser: StoreUser = {
+        id: `usr-${Date.now()}`,
+        fullName: sanitizeText(rawUser.fullName, 120),
+        email: cleanEmail,
+        phone: sanitizeText(rawUser.phone, 40),
+        password: `sha256:${hashPassword(plainPassword)}`,
+        isAdmin: false,
+        createdAt: new Date().toISOString(),
+      };
+
+      db.users = [newUser, ...db.users];
+      await writeDatabase(db);
+      const { password: _pwd, ...safeUser } = newUser;
+      return NextResponse.json({
+        ok: true,
+        users: stripPasswords(db.users),
+        user: safeUser,
+      });
+    }
+
+    // 6. Password Reset (Blocks Admin Account Takeover)
     if (body.action === 'reset_password' && body.email && body.newPassword) {
+      const rl = checkRateLimit(req, 'reset_password', 5, 10 * 60 * 1000);
+      if (!rl.allowed) {
+        return NextResponse.json(
+          { ok: false, error: 'Çok fazla şifre sıfırlama denemesi.' },
+          { status: 429 }
+        );
+      }
+
       const emailLower = String(body.email).trim().toLowerCase();
-      const idx = db.users.findIndex((u) => u.email.toLowerCase() === emailLower);
+      const idx = db.users.findIndex(
+        (u) => u.email.toLowerCase() === emailLower
+      );
       if (idx === -1) {
         return NextResponse.json(
-          { ok: false, error: 'Bu e-posta adresine ait kayıtlı bir kullanıcı bulunamadı.' },
+          {
+            ok: false,
+            error: 'Bu e-posta adresine ait kayıtlı bir kullanıcı bulunamadı.',
+          },
           { status: 404 }
         );
       }
+
+      if (
+        (db.users[idx].isAdmin || emailLower === 'admin@vesperbody.com') &&
+        !isAdminVerified
+      ) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Yönetici hesabı şifresi genel ekrandan sıfırlanamaz.',
+          },
+          { status: 403 }
+        );
+      }
+
       db.users[idx] = {
         ...db.users[idx],
-        password: String(body.newPassword),
+        password: `sha256:${hashPassword(String(body.newPassword))}`,
       };
       await writeDatabase(db);
-      return NextResponse.json({ ok: true, users: db.users });
+      return NextResponse.json({ ok: true, users: stripPasswords(db.users) });
     }
 
     return NextResponse.json(
