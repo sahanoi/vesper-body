@@ -235,11 +235,11 @@ export function CartDrawer() {
               className="w-full py-3.5 px-5 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg transition-all"
             >
               <Lock className="w-4 h-4" />
-              <span>Güvenli Ödemeye Geç (Üyeliksiz / Üye)</span>
+              <span>Ödeme Sayfasına Geç</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <p className="text-[11px] text-center text-[var(--text-secondary)]">
-              iyzico & PayTR 256-Bit 3D Secure Güvencesiyle • Üye Olmadan 30 Saniyede Sipariş
+              256-Bit SSL &amp; 3D Secure Güvencesiyle • %100 Gizli Paketleme
             </p>
           </div>
         )}
