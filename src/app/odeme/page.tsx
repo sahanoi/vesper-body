@@ -65,12 +65,22 @@ export default function CheckoutPage() {
     const tempOrderCode = `VSP-${Math.floor(10000 + Math.random() * 90000)}`;
 
     try {
+      let previousProductIds: string[] = [];
+      try {
+        previousProductIds = JSON.parse(
+          localStorage.getItem('vesper_pending_shopier_ids') || '[]'
+        );
+      } catch {
+        previousProductIds = [];
+      }
+
       const shopierRes = await fetch('/api/payment/shopier', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderNumber: tempOrderCode,
           giftNote: giftMysteryNote.trim() || undefined,
+          previousProductIds,
           items: cart.map((item) => ({
             productId: item.productId,
             size: item.size,
@@ -88,6 +98,11 @@ export default function CheckoutPage() {
         );
         return;
       }
+
+      localStorage.setItem(
+        'vesper_pending_shopier_ids',
+        JSON.stringify([String(shopierData.shopierProductId)])
+      );
 
       if (shopierData.directCheckoutActionUrl && shopierData.shopierProductId) {
         submitShopierFastCheckoutForm(

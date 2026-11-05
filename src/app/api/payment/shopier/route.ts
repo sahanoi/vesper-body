@@ -188,6 +188,44 @@ export async function POST(req: NextRequest) {
       ],
     };
 
+    // Purge this browser's earlier abandoned checkout products so they cannot
+    // pile up inside the customer's Shopier cart. Only products WE created
+    // (description starts with "Sipariş Kodu:") may ever be deleted.
+    const previousIds: string[] = Array.isArray(body.previousProductIds)
+      ? body.previousProductIds
+          .map((v: unknown) => String(v))
+          .filter((v: string) => /^\d{1,20}$/.test(v))
+          .slice(0, 10)
+      : [];
+    const shopierHeaders = {
+      Accept: 'application/json',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      Authorization: `Bearer ${token}`,
+    };
+    await Promise.all(
+      previousIds.map(async (pid) => {
+        try {
+          const g = await fetch(`${SHOPIER_API_BASE}/products/${pid}`, {
+            headers: shopierHeaders,
+          });
+          const info = await g.json().catch(() => null);
+          if (
+            g.ok &&
+            typeof info?.description === 'string' &&
+            info.description.startsWith('Sipariş Kodu:')
+          ) {
+            await fetch(`${SHOPIER_API_BASE}/products/${pid}`, {
+              method: 'DELETE',
+              headers: shopierHeaders,
+            });
+          }
+        } catch {
+          // best-effort cleanup
+        }
+      })
+    );
+
     const response = await fetch(`${SHOPIER_API_BASE}/products`, {
       method: 'POST',
       headers: {
