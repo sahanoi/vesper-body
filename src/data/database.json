@@ -1546,10 +1546,6 @@
     }
   ],
   "updatedAt": "2026-11-05T11:54:40.329Z",
-  "settings": {
-    "standardShippingCost": 89,
-    "freeShippingThreshold": 1500
-  },
   "users": [
     {
       "id": "usr-admin-1",

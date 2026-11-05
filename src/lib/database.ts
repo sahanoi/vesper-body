@@ -2,23 +2,17 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { INITIAL_ORDERS, INITIAL_PRODUCTS } from '@/data/initial-catalog';
-import { Order, Product, StoreSettings, StoreUser } from '@/types/commerce';
+import { Order, Product, StoreUser } from '@/types/commerce';
 import { hashPassword } from '@/lib/security';
 
 const LOCAL_DB_PATH = path.join(process.cwd(), 'src', 'data', 'database.json');
 const TMP_DB_PATH = path.join(os.tmpdir(), 'vesper-database.json');
 const CLOUD_KV_KEY = 'vesper_store_db_v1';
 
-export const DEFAULT_STORE_SETTINGS: StoreSettings = {
-  standardShippingCost: 89,
-  freeShippingThreshold: 1500,
-};
-
 export interface DatabaseSchema {
   products: Product[];
   orders: Order[];
   users: StoreUser[];
-  settings?: StoreSettings;
   updatedAt: string;
 }
 
@@ -128,9 +122,6 @@ export async function readDatabase(): Promise<DatabaseSchema> {
         if (!Array.isArray(parsed.users) || parsed.users.length === 0) {
           parsed.users = INITIAL_USERS;
         }
-        if (!parsed.settings) {
-          parsed.settings = DEFAULT_STORE_SETTINGS;
-        }
         memoryCache = parsed;
         return parsed;
       }
@@ -146,9 +137,6 @@ export async function readDatabase(): Promise<DatabaseSchema> {
       if (Array.isArray(parsed.products) && parsed.products.length > 0) {
         if (!Array.isArray(parsed.users) || parsed.users.length === 0) {
           parsed.users = INITIAL_USERS;
-        }
-        if (!parsed.settings) {
-          parsed.settings = DEFAULT_STORE_SETTINGS;
         }
         memoryCache = parsed;
         return parsed;

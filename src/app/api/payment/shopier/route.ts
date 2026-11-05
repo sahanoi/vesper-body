@@ -18,7 +18,6 @@ function getShopierToken(): string {
 
 export async function GET() {
   const token = getShopierToken();
-  const keyName = process.env.SHOPIER_KEY_NAME || 'osman';
 
   if (!token) {
     return NextResponse.json(
@@ -31,25 +30,9 @@ export async function GET() {
     );
   }
 
-  let shopId: number | string | null = null;
-  try {
-    const parts = token.split('.');
-    if (parts.length === 3) {
-      const payload = JSON.parse(
-        Buffer.from(parts[1], 'base64url').toString('utf-8')
-      );
-      shopId = payload.sub || null;
-    }
-  } catch {
-    // ignore decode error
-  }
-
   return NextResponse.json({
     ok: true,
     configured: true,
-    keyName,
-    shopId,
-    shopSlug: SHOPIER_SHOP_SLUG,
   });
 }
 
@@ -67,7 +50,6 @@ export async function POST(req: NextRequest) {
     }
 
     const token = getShopierToken();
-    const keyName = process.env.SHOPIER_KEY_NAME || 'osman';
 
     if (!token) {
       return NextResponse.json(
@@ -224,10 +206,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         ok: true,
         mode: 'fast_checkout',
-        keyName,
         verifiedAmount: authoritativeTotal,
         shopierProductId: String(data.id),
-        shopSlug: SHOPIER_SHOP_SLUG,
         directCheckoutActionUrl: `https://www.shopier.com/s/shipping/${encodeURIComponent(
           SHOPIER_SHOP_SLUG
         )}`,
