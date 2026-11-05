@@ -91,8 +91,51 @@ export default function CheckoutPage() {
     e.preventDefault();
     setErrorMsg(null);
 
-    if (!fullName.trim() || !email.trim() || !phone.trim() || !addressLine.trim()) {
-      setErrorMsg('Lütfen teslimat ve iletişim bilgilerini eksiksiz doldurun.');
+    const cleanName = fullName.trim().replace(/\s+/g, ' ');
+    const nameParts = cleanName.split(' ');
+    const nameRegex = /^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]{2,}$/;
+    if (
+      nameParts.length < 2 ||
+      nameParts.some((p) => p.length < 2) ||
+      !nameRegex.test(cleanName)
+    ) {
+      setErrorMsg(
+        'Lütfen geçerli bir Ad ve Soyad girin (Örn: Selin Kaya). Rastgele veya tek kelimelik girişler kabul edilmez.'
+      );
+      return;
+    }
+
+    const digitsOnlyPhone = phone.replace(/\D/g, '');
+    const isValidTrPhone =
+      (digitsOnlyPhone.length === 11 && digitsOnlyPhone.startsWith('05')) ||
+      (digitsOnlyPhone.length === 10 && digitsOnlyPhone.startsWith('5')) ||
+      (digitsOnlyPhone.length === 12 && digitsOnlyPhone.startsWith('905'));
+
+    if (!isValidTrPhone) {
+      setErrorMsg(
+        'Lütfen geçerli bir cep telefonu numarası girin (Örn: 0532 123 45 67).'
+      );
+      return;
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const emailRegex = /^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]{2,}\.[a-zA-Z]{2,10}$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setErrorMsg(
+        'Lütfen geçerli bir e-posta adresi girin (Örn: adiniz@gmail.com).'
+      );
+      return;
+    }
+
+    if (city.trim().length < 2 || district.trim().length < 2) {
+      setErrorMsg('Lütfen geçerli bir İl ve İlçe adı girin.');
+      return;
+    }
+
+    if (addressLine.trim().length < 10) {
+      setErrorMsg(
+        'Lütfen teslimat için mahalle, sokak ve kapı numarasını içeren gerçek bir açık adres girin (En az 10 karakter).'
+      );
       return;
     }
 
@@ -104,21 +147,81 @@ export default function CheckoutPage() {
     }
 
     setIsSubmitting(true);
-    const itemsSummary = cart
-      .map((i) => `${i.name} (${i.size} x${i.quantity})`)
-      .join(', ');
-    const firstImage = cart[0]?.imageUrl;
+
+    // If Shopier is selected, FIRST create the real Shopier checkout session before approving order!
+    if (paymentProvider === 'shopier') {
+      const tempOrderCode = `VSP-${Math.floor(10000 + Math.random() * 90000)}`;
+      try {
+        const shopierRes = await fetch('/api/payment/shopier', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderNumber: tempOrderCode,
+            customerName: cleanName,
+            items: cart.map((item) => ({
+              productId: item.productId,
+              size: item.size,
+              quantity: item.quantity,
+            })),
+          }),
+        });
+        const shopierData = await shopierRes.json();
+
+        if (!shopierRes.ok || !shopierData?.ok || !shopierData?.paymentUrl) {
+          setIsSubmitting(false);
+          setErrorMsg(
+            shopierData?.error ||
+              'Shopier ödeme ekranı oluşturulamadı. Lütfen tekrar deneyin.'
+          );
+          return;
+        }
+
+        const res = createOrder({
+          customer: {
+            isGuest: checkoutMode === 'guest' && !currentUser,
+            userId: currentUser?.id,
+            fullName: cleanName,
+            email: cleanEmail,
+            phone,
+            city: city.trim(),
+            district: district.trim(),
+            addressLine: addressLine.trim(),
+            discreetPackagingConfirmed: discreetAccepted,
+            giftMysteryNote: mysteryNote.trim() || undefined,
+          },
+          paymentProvider: 'shopier',
+          installmentCount,
+        });
+
+        if (!res.ok || !res.order) {
+          setIsSubmitting(false);
+          setErrorMsg(res.error || 'Sipariş oluşturulurken bir hata oluştu.');
+          return;
+        }
+
+        setShopierPaymentUrl(shopierData.paymentUrl);
+        // Directly redirect user to the real Shopier 3D Secure payment page!
+        window.location.href = shopierData.paymentUrl;
+        return;
+      } catch {
+        setIsSubmitting(false);
+        setErrorMsg(
+          'Shopier ödeme sunucusuna bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.'
+        );
+        return;
+      }
+    }
 
     const res = createOrder({
       customer: {
         isGuest: checkoutMode === 'guest' && !currentUser,
         userId: currentUser?.id,
-        fullName,
-        email,
+        fullName: cleanName,
+        email: cleanEmail,
         phone,
-        city,
-        district,
-        addressLine,
+        city: city.trim(),
+        district: district.trim(),
+        addressLine: addressLine.trim(),
         discreetPackagingConfirmed: discreetAccepted,
         giftMysteryNote: mysteryNote.trim() || undefined,
       },
@@ -130,31 +233,6 @@ export default function CheckoutPage() {
       setIsSubmitting(false);
       setErrorMsg(res.error || 'Sipariş oluşturulurken bir hata oluştu.');
       return;
-    }
-
-    if (paymentProvider === 'shopier') {
-      try {
-        const shopierRes = await fetch('/api/payment/shopier', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderNumber: res.order.orderNumber,
-            customerName: fullName,
-            items: res.order.items.map((item) => ({
-              productId: item.productId,
-              size: item.size,
-              quantity: item.quantity,
-            })),
-          }),
-        });
-        const shopierData = await shopierRes.json();
-        if (shopierData?.paymentUrl) {
-          setShopierPaymentUrl(shopierData.paymentUrl);
-          window.open(shopierData.paymentUrl, '_blank', 'noopener,noreferrer');
-        }
-      } catch {
-        // Fallback to direct order screen if offline
-      }
     }
 
     setIsSubmitting(false);
@@ -356,8 +434,11 @@ export default function CheckoutPage() {
                   <input
                     type="tel"
                     required
+                    maxLength={15}
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) =>
+                      setPhone(e.target.value.replace(/[^0-9+\s]/g, ''))
+                    }
                     placeholder="05XX XXX XX XX"
                     className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
                   />
@@ -473,27 +554,41 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <label className="block font-medium mb-1">Kart Üzerindeki İsim</label>
-                  <input
-                    type="text"
-                    value={cardHolder || fullName}
-                    onChange={(e) => setCardHolder(e.target.value)}
-                    placeholder="AD SOYAD"
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                  />
+              {paymentProvider === 'shopier' ? (
+                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs space-y-1.5">
+                  <p className="font-semibold text-emerald-500 flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Resmi Shopier 3D Secure Ödeme Ekranı</span>
+                  </p>
+                  <p className="text-[11px] text-[var(--text-secondary)]">
+                    Güvenliğiniz için kredi/banka kartı bilgileriniz sitemizde sorulmaz.{' '}
+                    <strong>&ldquo;Shopier ile Öde&rdquo;</strong> butonuna bastığınızda doğrudan resmi{' '}
+                    <strong>shopier.com</strong> 3D Secure ödeme sayfasına yönlendirilirsiniz.
+                  </p>
                 </div>
-                <div>
-                  <label className="block font-medium mb-1">Kart Numarası (Demo Hazır)</label>
-                  <input
-                    type="text"
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)] font-mono"
-                  />
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="block font-medium mb-1">Kart Üzerindeki İsim</label>
+                    <input
+                      type="text"
+                      value={cardHolder || fullName}
+                      onChange={(e) => setCardHolder(e.target.value)}
+                      placeholder="AD SOYAD"
+                      className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium mb-1">Kart Numarası (Demo Hazır)</label>
+                    <input
+                      type="text"
+                      value={cardNumber}
+                      onChange={(e) => setCardNumber(e.target.value)}
+                      className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)] font-mono"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Installments */}
               <div className="space-y-2 text-xs">
