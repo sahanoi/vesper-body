@@ -5,10 +5,12 @@ import { checkRateLimit, sanitizeText } from '@/lib/security';
 const SHOPIER_API_BASE = 'https://api.shopier.com/v1';
 const FREE_SHIPPING_THRESHOLD = 1500;
 const STANDARD_SHIPPING_COST = 89;
+const SHOPIER_SHOP_SLUG = process.env.SHOPIER_SHOP_SLUG || 'VesperBody';
 
-// Guaranteed HTTPS .png image URL so Shopier media[0].url regex validation succeeds even from localhost:3000
-const FALLBACK_PUBLIC_IMAGE_URL =
-  'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png';
+// Public GitHub raw mirror of our repository's /public folder so localhost:3000 sends the EXACT real product photo to Shopier!
+const GITHUB_RAW_PUBLIC_BASE =
+  'https://raw.githubusercontent.com/sahanoi/vesper-body/main/public';
+const FALLBACK_BRAND_IMAGE_URL = `${GITHUB_RAW_PUBLIC_BASE}/images/brand/vesper-body-logo.jpg`;
 
 function getShopierToken(): string {
   return (process.env.SHOPIER_PAT || '').trim();
@@ -47,12 +49,13 @@ export async function GET() {
     configured: true,
     keyName,
     shopId,
+    shopSlug: SHOPIER_SHOP_SLUG,
   });
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const rl = checkRateLimit(req, 'shopier_checkout', 10, 5 * 60 * 1000);
+    const rl = checkRateLimit(req, 'shopier_checkout', 15, 5 * 60 * 1000);
     if (!rl.allowed) {
       return NextResponse.json(
         {
@@ -78,97 +81,91 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const orderNumber = sanitizeText(body.orderNumber, 40);
-    const customerName = sanitizeText(body.customerName || '', 100);
+    const giftNote = sanitizeText(body.giftNote || '', 200);
     const clientItems: Array<{
       productId: string;
       size: string;
       quantity: number;
     }> = Array.isArray(body.items) ? body.items : [];
 
-    if (!orderNumber) {
+    if (!orderNumber || clientItems.length === 0) {
       return NextResponse.json(
-        { ok: false, error: 'Sipariş numarası zorunludur.' },
+        { ok: false, error: 'Sepet bilgisi zorunludur.' },
         { status: 400 }
       );
     }
 
-    // ZERO-TRUST SERVER-SIDE PRICE CALCULATION
+    // ZERO-TRUST SERVER-SIDE PRICE & PRODUCT IMAGE RESOLUTION
     const db = await readDatabase();
-    let authoritativeTotal = 0;
-    let itemsSummary = '';
+    let subtotal = 0;
+    const summaryParts: string[] = [];
+    let primaryProductTitle = '';
     let coverImagePath = '';
 
-    const existingOrder = db.orders.find(
-      (o) => o.orderNumber.toLowerCase() === orderNumber.toLowerCase()
-    );
-
-    if (existingOrder && existingOrder.totalAmount > 0) {
-      authoritativeTotal = existingOrder.totalAmount;
-      itemsSummary = existingOrder.items
-        .map((i) => `${i.name} (${i.size} x${i.quantity})`)
-        .join(', ');
-      if (existingOrder.items[0]?.imageUrl) {
-        coverImagePath = existingOrder.items[0].imageUrl;
-      }
-    } else if (clientItems.length > 0) {
-      let subtotal = 0;
-      const summaryParts: string[] = [];
-
-      for (const item of clientItems) {
-        const dbProd = db.products.find((p) => p.id === item.productId);
-        if (!dbProd) {
-          return NextResponse.json(
-            { ok: false, error: 'Sepette geçersiz ürün tespit edildi.' },
-            { status: 400 }
-          );
-        }
-        const qty = Math.max(
-          1,
-          Math.min(20, Math.floor(Number(item.quantity) || 1))
+    for (const item of clientItems) {
+      const dbProd = db.products.find((p) => p.id === item.productId);
+      if (!dbProd) {
+        return NextResponse.json(
+          { ok: false, error: 'Sepette geçersiz ürün tespit edildi.' },
+          { status: 400 }
         );
-        subtotal += dbProd.price * qty;
-        summaryParts.push(`${dbProd.name} (${item.size} x${qty})`);
-        if (!coverImagePath && dbProd.media[0]?.url) {
-          coverImagePath = dbProd.media[0].url;
-        }
+      }
+      const qty = Math.max(
+        1,
+        Math.min(20, Math.floor(Number(item.quantity) || 1))
+      );
+      subtotal += dbProd.price * qty;
+      summaryParts.push(`${dbProd.name} (${item.size} Beden x${qty})`);
+
+      if (!primaryProductTitle) {
+        primaryProductTitle =
+          clientItems.length === 1
+            ? `${dbProd.name} (${item.size} Beden)`
+            : `${dbProd.name} + ${clientItems.length - 1} Ürün (${orderNumber})`;
       }
 
-      const shipping =
-        subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
-      authoritativeTotal = subtotal + shipping;
-      itemsSummary = summaryParts.join(', ');
-    } else {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: 'Doğrulanabilir sepet bilgisi bulunamadı.',
-        },
-        { status: 400 }
-      );
+      if (!coverImagePath) {
+        const firstImage = dbProd.media.find((m) => m.type === 'image');
+        if (firstImage?.url) {
+          coverImagePath = firstImage.url;
+        }
+      }
     }
+
+    const shipping =
+      subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
+    const authoritativeTotal = subtotal + shipping;
+    const itemsSummary = summaryParts.join(' | ');
 
     const origin = req.headers.get('origin') || '';
     const isPublicHttpsOrigin =
       origin.startsWith('https://') && !origin.includes('localhost');
 
-    // Shopier strictly validates that media[0].url is a public https:// URL ending in .jpg/.jpeg/.png
-    let shopierMediaUrl = FALLBACK_PUBLIC_IMAGE_URL;
-    if (
-      coverImagePath &&
-      isPublicHttpsOrigin &&
-      /\.(jpg|jpeg|png)$/i.test(coverImagePath)
-    ) {
-      shopierMediaUrl = `${origin}${coverImagePath}`;
-    } else if (
-      coverImagePath.startsWith('https://') &&
-      /\.(jpg|jpeg|png)$/i.test(coverImagePath)
-    ) {
-      shopierMediaUrl = coverImagePath;
+    // Resolve the REAL product photo URL (works both on Vercel production AND on localhost:3000!)
+    let shopierMediaUrl = FALLBACK_BRAND_IMAGE_URL;
+    if (coverImagePath) {
+      if (coverImagePath.startsWith('https://')) {
+        shopierMediaUrl = coverImagePath;
+      } else if (isPublicHttpsOrigin) {
+        shopierMediaUrl = `${origin}${coverImagePath}`;
+      } else {
+        // On localhost:3000, use our GitHub raw public URL for the exact same product image!
+        shopierMediaUrl = `${GITHUB_RAW_PUBLIC_BASE}${coverImagePath}`;
+      }
     }
 
+    const descriptionText = [
+      `Sipariş Kodu: ${orderNumber}`,
+      `İçerik: ${itemsSummary}`,
+      giftNote ? `Gizli Zarf Notu: ${giftNote}` : null,
+      `%100 Gizli Mat Siyah Kutu ile Gönderim`,
+    ]
+      .filter(Boolean)
+      .join(' • ');
+
     const shopierPayload = {
-      title: `VESPER BODY Siparis ${orderNumber}`,
-      description: `Alici: ${customerName} | Paket: ${itemsSummary} | %100 Gizli Paketleme`,
+      title: primaryProductTitle.slice(0, 95),
+      description: descriptionText,
       type: 'physical',
       priceData: {
         currency: 'TRY',
@@ -199,13 +196,17 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json().catch(() => null);
 
-    if (response.ok && data && data.url) {
+    if (response.ok && data && data.id) {
       return NextResponse.json({
         ok: true,
-        mode: 'live_redirect',
+        mode: 'fast_checkout',
         keyName,
         verifiedAmount: authoritativeTotal,
-        shopierProductId: data.id,
+        shopierProductId: String(data.id),
+        shopSlug: SHOPIER_SHOP_SLUG,
+        directCheckoutActionUrl: `https://www.shopier.com/s/shipping/${encodeURIComponent(
+          SHOPIER_SHOP_SLUG
+        )}`,
         paymentUrl: data.url,
       });
     }

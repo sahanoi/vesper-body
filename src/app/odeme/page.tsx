@@ -10,9 +10,32 @@ import {
   UserCheck,
   UserPlus,
   Sparkles,
+  Zap,
 } from 'lucide-react';
 import { useStore } from '@/context/StoreContext';
 import { Order } from '@/types/commerce';
+
+function submitShopierFastCheckoutForm(actionUrl: string, productId: string) {
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = actionUrl;
+  form.style.display = 'none';
+
+  const prodInput = document.createElement('input');
+  prodInput.type = 'hidden';
+  prodInput.name = 'product_id';
+  prodInput.value = String(productId);
+  form.appendChild(prodInput);
+
+  const qtyInput = document.createElement('input');
+  qtyInput.type = 'hidden';
+  qtyInput.name = 'quantity';
+  qtyInput.value = '1';
+  form.appendChild(qtyInput);
+
+  document.body.appendChild(form);
+  form.submit();
+}
 
 export default function CheckoutPage() {
   const {
@@ -52,9 +75,6 @@ export default function CheckoutPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
-  const [shopierPaymentUrl, setShopierPaymentUrl] = useState<string | null>(
-    null
-  );
   const [shopierStatus, setShopierStatus] = useState<{
     configured: boolean;
     keyName: string;
@@ -91,6 +111,67 @@ export default function CheckoutPage() {
     e.preventDefault();
     setErrorMsg(null);
 
+    if (!hygieneAccepted) {
+      setErrorMsg(
+        'Lütfen Mesafeli Satış Sözleşmesi ve Hijyen Mühürü şartlarını onaylayın.'
+      );
+      return;
+    }
+
+    // ZERO-FRICTION SHOPIER EXPRESS FLOW:
+    // Customer does NOT fill out address twice AND skips Shopier's "Sepete Ekle / Hemen Al" product page!
+    if (paymentProvider === 'shopier') {
+      setIsSubmitting(true);
+      const tempOrderCode = `VSP-${Math.floor(10000 + Math.random() * 90000)}`;
+      try {
+        const shopierRes = await fetch('/api/payment/shopier', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderNumber: tempOrderCode,
+            giftNote: mysteryNote.trim() || undefined,
+            items: cart.map((item) => ({
+              productId: item.productId,
+              size: item.size,
+              quantity: item.quantity,
+            })),
+          }),
+        });
+        const shopierData = await shopierRes.json();
+
+        if (!shopierRes.ok || !shopierData?.ok || !shopierData?.shopierProductId) {
+          setIsSubmitting(false);
+          setErrorMsg(
+            shopierData?.error ||
+              'Shopier ödeme ekranı oluşturulamadı. Lütfen tekrar deneyin.'
+          );
+          return;
+        }
+
+        // Directly POST to https://www.shopier.com/s/shipping/VesperBody
+        // This skips the product listing ("Sepete ekle / Hemen al") page and lands directly on checkout!
+        if (shopierData.directCheckoutActionUrl && shopierData.shopierProductId) {
+          submitShopierFastCheckoutForm(
+            shopierData.directCheckoutActionUrl,
+            shopierData.shopierProductId
+          );
+          return;
+        }
+
+        if (shopierData.paymentUrl) {
+          window.location.href = shopierData.paymentUrl;
+          return;
+        }
+      } catch {
+        setIsSubmitting(false);
+        setErrorMsg(
+          'Shopier ödeme sunucusuna bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.'
+        );
+        return;
+      }
+    }
+
+    // For iyzico / PayTR on-site form: validate delivery fields on our page
     const cleanName = fullName.trim().replace(/\s+/g, ' ');
     const nameParts = cleanName.split(' ');
     const nameRegex = /^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]{2,}$/;
@@ -100,7 +181,7 @@ export default function CheckoutPage() {
       !nameRegex.test(cleanName)
     ) {
       setErrorMsg(
-        'Lütfen geçerli bir Ad ve Soyad girin (Örn: Selin Kaya). Rastgele veya tek kelimelik girişler kabul edilmez.'
+        'Lütfen geçerli bir Ad ve Soyad girin (Örn: Selin Kaya).'
       );
       return;
     }
@@ -119,7 +200,8 @@ export default function CheckoutPage() {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-    const emailRegex = /^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]{2,}\.[a-zA-Z]{2,10}$/;
+    const emailRegex =
+      /^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]{2,}\.[a-zA-Z]{2,10}$/;
     if (!emailRegex.test(cleanEmail)) {
       setErrorMsg(
         'Lütfen geçerli bir e-posta adresi girin (Örn: adiniz@gmail.com).'
@@ -134,84 +216,12 @@ export default function CheckoutPage() {
 
     if (addressLine.trim().length < 10) {
       setErrorMsg(
-        'Lütfen teslimat için mahalle, sokak ve kapı numarasını içeren gerçek bir açık adres girin (En az 10 karakter).'
-      );
-      return;
-    }
-
-    if (!hygieneAccepted) {
-      setErrorMsg(
-        'Lütfen Mesafeli Satış Sözleşmesi ve Hijyen Mühürü şartlarını onaylayın.'
+        'Lütfen mahalle, sokak ve kapı numarasını içeren gerçek bir açık adres girin (En az 10 karakter).'
       );
       return;
     }
 
     setIsSubmitting(true);
-
-    // If Shopier is selected, FIRST create the real Shopier checkout session before approving order!
-    if (paymentProvider === 'shopier') {
-      const tempOrderCode = `VSP-${Math.floor(10000 + Math.random() * 90000)}`;
-      try {
-        const shopierRes = await fetch('/api/payment/shopier', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderNumber: tempOrderCode,
-            customerName: cleanName,
-            items: cart.map((item) => ({
-              productId: item.productId,
-              size: item.size,
-              quantity: item.quantity,
-            })),
-          }),
-        });
-        const shopierData = await shopierRes.json();
-
-        if (!shopierRes.ok || !shopierData?.ok || !shopierData?.paymentUrl) {
-          setIsSubmitting(false);
-          setErrorMsg(
-            shopierData?.error ||
-              'Shopier ödeme ekranı oluşturulamadı. Lütfen tekrar deneyin.'
-          );
-          return;
-        }
-
-        const res = createOrder({
-          customer: {
-            isGuest: checkoutMode === 'guest' && !currentUser,
-            userId: currentUser?.id,
-            fullName: cleanName,
-            email: cleanEmail,
-            phone,
-            city: city.trim(),
-            district: district.trim(),
-            addressLine: addressLine.trim(),
-            discreetPackagingConfirmed: discreetAccepted,
-            giftMysteryNote: mysteryNote.trim() || undefined,
-          },
-          paymentProvider: 'shopier',
-          installmentCount,
-        });
-
-        if (!res.ok || !res.order) {
-          setIsSubmitting(false);
-          setErrorMsg(res.error || 'Sipariş oluşturulurken bir hata oluştu.');
-          return;
-        }
-
-        setShopierPaymentUrl(shopierData.paymentUrl);
-        // Directly redirect user to the real Shopier 3D Secure payment page!
-        window.location.href = shopierData.paymentUrl;
-        return;
-      } catch {
-        setIsSubmitting(false);
-        setErrorMsg(
-          'Shopier ödeme sunucusuna bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.'
-        );
-        return;
-      }
-    }
-
     const res = createOrder({
       customer: {
         isGuest: checkoutMode === 'guest' && !currentUser,
@@ -294,22 +304,6 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {shopierPaymentUrl && (
-            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs space-y-2">
-              <p className="font-semibold text-emerald-500">
-                Shopier 3D Secure Ödeme Bağlantınız Hazır
-              </p>
-              <a
-                href={shopierPaymentUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-5 py-2.5 rounded-full bg-emerald-600 text-white font-semibold"
-              >
-                Shopier Ödeme Sayfasını Aç →
-              </a>
-            </div>
-          )}
-
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link
               href={`/siparis-takip?kod=${completedOrder.orderNumber}`}
@@ -336,7 +330,7 @@ export default function CheckoutPage() {
           Güvenli & Gizli Ödeme
         </h1>
         <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
-          İster üye olmadan 30 saniyede, ister üye girişi yaparak siparişinizi tamamlayın.
+          Bilgilerinizi iki kez girmeyin — Shopier Tek Tıkla Hızlı Ödeme ile 15 saniyede siparişinizi tamamlayın.
         </p>
       </div>
 
@@ -355,165 +349,18 @@ export default function CheckoutPage() {
           onSubmit={handleSubmitOrder}
           className="grid grid-cols-1 lg:grid-cols-12 gap-8"
         >
-          {/* Left 7 Cols: Guest vs Member Switch + Address + Payment */}
+          {/* Left 7 Cols */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Step 1: Guest vs Member Selector */}
-            <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wider">
-                  1. Alışveriş Tercihi
-                </h2>
-                {currentUser && (
-                  <span className="text-xs text-emerald-500 font-medium">
-                    ✓ {currentUser.fullName} olarak giriş yapıldı
-                  </span>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setCheckoutMode('guest')}
-                  className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                    checkoutMode === 'guest'
-                      ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10'
-                      : 'border-[var(--border-subtle)] bg-[var(--bg-surface)]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 font-semibold text-xs">
-                    <UserPlus className="w-4 h-4 text-[var(--accent-primary)]" />
-                    <span>Üyeliksiz Hızlı Devam Et</span>
-                  </div>
-                  <p className="text-[11px] text-[var(--text-secondary)] mt-1">
-                    Şifre oluşturmadan, sadece teslimat adresinizle hemen sipariş verin.
-                  </p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleQuickDemoMemberLogin}
-                  className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                    checkoutMode === 'member'
-                      ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10'
-                      : 'border-[var(--border-subtle)] bg-[var(--bg-surface)]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 font-semibold text-xs">
-                    <UserCheck className="w-4 h-4 text-[var(--accent-primary)]" />
-                    <span>Üye Girişi ile Hızlı Doldur</span>
-                  </div>
-                  <p className="text-[11px] text-[var(--text-secondary)] mt-1">
-                    Kayıtlı adres bilgilerinizi otomatik doldurun ve sipariş geçmişinizi saklayın.
-                  </p>
-                </button>
-              </div>
-            </div>
-
-            {/* Step 2: Delivery Address & Discreet Packaging */}
-            <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] space-y-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wider">
-                2. Gizli Teslimat Bilgileri
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <label className="block font-medium mb-1">Ad Soyad *</label>
-                  <input
-                    type="text"
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Örn: Selin Kaya"
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-medium mb-1">
-                    Telefon (Kargo SMS Takibi İçin) *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    maxLength={15}
-                    value={phone}
-                    onChange={(e) =>
-                      setPhone(e.target.value.replace(/[^0-9+\s]/g, ''))
-                    }
-                    placeholder="05XX XXX XX XX"
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block font-medium mb-1">
-                    E-Posta (Fatura ve Sipariş Kodu İçin) *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="ornek@eposta.com"
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-medium mb-1">İl *</label>
-                  <input
-                    type="text"
-                    required
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-medium mb-1">İlçe *</label>
-                  <input
-                    type="text"
-                    required
-                    value={district}
-                    onChange={(e) => setDistrict(e.target.value)}
-                    placeholder="Örn: Kadıköy"
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block font-medium mb-1">Açık Adres *</label>
-                  <textarea
-                    rows={2}
-                    required
-                    value={addressLine}
-                    onChange={(e) => setAddressLine(e.target.value)}
-                    placeholder="Mahalle, Sokak, Bina ve Daire No"
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="flex items-center gap-1.5 font-medium mb-1 text-[var(--accent-primary)]">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Gizli Sürpriz / Hediye Zarfı Notu (İsteğe Bağlı)
-                  </label>
-                  <input
-                    type="text"
-                    value={mysteryNote}
-                    onChange={(e) => setMysteryNote(e.target.value)}
-                    placeholder="Kutu içindeki mühürlü siyah zarfa yazılacak özel not..."
-                    className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Step 3: Payment Gateway (Shopier / iyzico / PayTR) */}
+            {/* Payment Method Selector */}
             <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <h2 className="text-sm font-semibold uppercase tracking-wider">
-                    3. Ödeme Altyapısı (3D Secure)
+                    1. Ödeme Yöntemi Seçimi (3D Secure)
                   </h2>
                   {shopierStatus?.configured && (
                     <p className="text-[11px] text-emerald-500 font-medium mt-0.5">
-                      ✓ Shopier API Aktif (Anahtar: {shopierStatus.keyName} • Mağaza #{shopierStatus.shopId})
+                      ✓ Shopier Hızlı Ödeme Aktif (Anahtar: {shopierStatus.keyName} • Mağaza #{shopierStatus.shopId})
                     </p>
                   )}
                 </div>
@@ -521,18 +368,18 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setPaymentProvider('shopier')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer ${
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold border cursor-pointer transition-all ${
                       paymentProvider === 'shopier'
-                        ? 'bg-[#28C76F] text-white border-[#28C76F]'
+                        ? 'bg-[#28C76F] text-white border-[#28C76F] shadow-sm'
                         : 'border-[var(--border-subtle)]'
                     }`}
                   >
-                    Shopier 3D Secure
+                    ⚡ Shopier Hızlı Ödeme (Önerilen)
                   </button>
                   <button
                     type="button"
                     onClick={() => setPaymentProvider('iyzico')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer ${
+                    className={`px-3 py-2 rounded-xl text-xs font-bold border cursor-pointer ${
                       paymentProvider === 'iyzico'
                         ? 'bg-[#1E64FF] text-white border-[#1E64FF]'
                         : 'border-[var(--border-subtle)]'
@@ -543,7 +390,7 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setPaymentProvider('paytr')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer ${
+                    className={`px-3 py-2 rounded-xl text-xs font-bold border cursor-pointer ${
                       paymentProvider === 'paytr'
                         ? 'bg-[#002B5C] text-white border-[#002B5C]'
                         : 'border-[var(--border-subtle)]'
@@ -555,71 +402,177 @@ export default function CheckoutPage() {
               </div>
 
               {paymentProvider === 'shopier' ? (
-                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs space-y-1.5">
-                  <p className="font-semibold text-emerald-500 flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5" />
-                    <span>Resmi Shopier 3D Secure Ödeme Ekranı</span>
-                  </p>
-                  <p className="text-[11px] text-[var(--text-secondary)]">
-                    Güvenliğiniz için kredi/banka kartı bilgileriniz sitemizde sorulmaz.{' '}
-                    <strong>&ldquo;Shopier ile Öde&rdquo;</strong> butonuna bastığınızda doğrudan resmi{' '}
-                    <strong>shopier.com</strong> 3D Secure ödeme sayfasına yönlendirilirsiniz.
-                  </p>
+                <div className="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <Zap className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-semibold text-emerald-500">
+                        Sıfır Sürtünme — Bilgilerinizi İki Kez Girmeyin!
+                      </h3>
+                      <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                        Burada uzun adres formları doldurmanıza gerek yoktur.{' '}
+                        <strong className="text-[var(--text-primary)]">
+                          &ldquo;Shopier ile Hemen Öde&rdquo;
+                        </strong>{' '}
+                        butonuna bastığınızda ürün sayfası atlanarak doğrudan{' '}
+                        <strong className="text-[var(--text-primary)]">
+                          Resmi Shopier Teslimat &amp; 3D Secure Kart Ekranı
+                        </strong>{' '}
+                        açılır; adresinizi ve kartınızı tek seferde güvenle girersiniz.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-emerald-500/20">
+                    <label className="flex items-center gap-1.5 text-xs font-medium mb-1.5 text-[var(--accent-primary)]">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Gizli Sürpriz / Hediye Zarfı Notu (İsteğe Bağlı)
+                    </label>
+                    <input
+                      type="text"
+                      value={mysteryNote}
+                      onChange={(e) => setMysteryNote(e.target.value)}
+                      placeholder="Kutu içindeki mühürlü siyah zarfa yazılacak özel notunuz..."
+                      className="w-full p-2.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-canvas)] text-xs"
+                    />
+                  </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <label className="block font-medium mb-1">Kart Üzerindeki İsim</label>
-                    <input
-                      type="text"
-                      value={cardHolder || fullName}
-                      onChange={(e) => setCardHolder(e.target.value)}
-                      placeholder="AD SOYAD"
-                      className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-medium mb-1">Kart Numarası (Demo Hazır)</label>
-                    <input
-                      type="text"
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value)}
-                      className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)] font-mono"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Installments */}
-              <div className="space-y-2 text-xs">
-                <span className="font-medium block">Taksit Seçenekleri:</span>
-                <div className="grid grid-cols-3 gap-2.5">
-                  {[
-                    { count: 1, label: 'Tek Çekim (Vade Farksız)' },
-                    { count: 2, label: '2 Taksit (Peşin Fiyatına)' },
-                    { count: 3, label: '3 Taksit (Peşin Fiyatına)' },
-                  ].map((inst) => (
+                <>
+                  {/* Guest vs Member Selector (Only shown for non-Shopier on-site forms) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <button
-                      key={inst.count}
                       type="button"
-                      onClick={() => setInstallmentCount(inst.count)}
-                      className={`p-2.5 rounded-xl border text-center cursor-pointer ${
-                        installmentCount === inst.count
-                          ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 font-semibold'
+                      onClick={() => setCheckoutMode('guest')}
+                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        checkoutMode === 'guest'
+                          ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10'
                           : 'border-[var(--border-subtle)] bg-[var(--bg-surface)]'
                       }`}
                     >
-                      <span className="block">{inst.label}</span>
-                      <span className="text-[11px] text-[var(--text-secondary)]">
-                        {Math.round(
-                          (cartSubtotal + shippingCost) / inst.count
-                        ).toLocaleString('tr-TR')}{' '}
-                        TL / ay
-                      </span>
+                      <div className="flex items-center gap-2 font-semibold text-xs">
+                        <UserPlus className="w-4 h-4 text-[var(--accent-primary)]" />
+                        <span>Üyeliksiz Hızlı Devam Et</span>
+                      </div>
                     </button>
-                  ))}
-                </div>
-              </div>
+
+                    <button
+                      type="button"
+                      onClick={handleQuickDemoMemberLogin}
+                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        checkoutMode === 'member'
+                          ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10'
+                          : 'border-[var(--border-subtle)] bg-[var(--bg-surface)]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 font-semibold text-xs">
+                        <UserCheck className="w-4 h-4 text-[var(--accent-primary)]" />
+                        <span>Kayıtlı Adresimle Doldur</span>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Delivery Address Fields */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2">
+                    <div>
+                      <label className="block font-medium mb-1">Ad Soyad *</label>
+                      <input
+                        type="text"
+                        required
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Örn: Selin Kaya"
+                        className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium mb-1">
+                        Telefon (Kargo SMS Takibi İçin) *
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={15}
+                        value={phone}
+                        onChange={(e) =>
+                          setPhone(e.target.value.replace(/[^0-9+\s]/g, ''))
+                        }
+                        placeholder="05XX XXX XX XX"
+                        className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block font-medium mb-1">
+                        E-Posta (Fatura ve Sipariş Kodu İçin) *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="ornek@eposta.com"
+                        className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium mb-1">İl *</label>
+                      <input
+                        type="text"
+                        required
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium mb-1">İlçe *</label>
+                      <input
+                        type="text"
+                        required
+                        value={district}
+                        onChange={(e) => setDistrict(e.target.value)}
+                        placeholder="Örn: Kadıköy"
+                        className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block font-medium mb-1">Açık Adres *</label>
+                      <textarea
+                        rows={2}
+                        required
+                        value={addressLine}
+                        onChange={(e) => setAddressLine(e.target.value)}
+                        placeholder="Mahalle, Sokak, Bina ve Daire No"
+                        className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2">
+                    <div>
+                      <label className="block font-medium mb-1">Kart Üzerindeki İsim</label>
+                      <input
+                        type="text"
+                        value={cardHolder || fullName}
+                        onChange={(e) => setCardHolder(e.target.value)}
+                        placeholder="AD SOYAD"
+                        className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium mb-1">Kart Numarası</label>
+                      <input
+                        type="text"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                        className="w-full p-2.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)] font-mono"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -720,20 +673,20 @@ export default function CheckoutPage() {
                 <CreditCard className="w-4 h-4" />
                 <span>
                   {isSubmitting
-                    ? 'Shopier Güvenli Ödeme Hazırlanıyor...'
+                    ? 'Shopier Güvenli Ödeme Ekranı Açılıyor...'
                     : `${
                         paymentProvider === 'shopier'
-                          ? 'Shopier'
+                          ? 'Shopier ile Hemen'
                           : paymentProvider === 'iyzico'
-                          ? 'iyzico'
-                          : 'PayTR'
-                      } ile ${(cartSubtotal + shippingCost).toLocaleString('tr-TR')} TL Öde`}
+                          ? 'iyzico ile'
+                          : 'PayTR ile'
+                      } ${(cartSubtotal + shippingCost).toLocaleString('tr-TR')} TL Öde →`}
                 </span>
               </button>
 
               <div className="flex items-center justify-center gap-2 text-[11px] text-[var(--text-secondary)]">
                 <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                <span>Kredi kartı ekstrenizde &ldquo;VELOURS TEKSTİL A.Ş.&rdquo; olarak görünür.</span>
+                <span>256-Bit SSL &amp; 3D Secure Güvencesiyle Gizli Paket Gönderim</span>
               </div>
             </div>
           </div>
@@ -742,4 +695,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
