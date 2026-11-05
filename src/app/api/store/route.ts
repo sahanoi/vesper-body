@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { INITIAL_PRODUCTS } from '@/data/initial-catalog';
 import { Order, Product, StoreUser } from '@/types/commerce';
 import {
+  DEFAULT_STORE_SETTINGS,
   getAdminExpectedPassword,
   readDatabase,
   stripPasswords,
@@ -29,6 +30,7 @@ export async function GET(req: NextRequest) {
     products: db.products,
     orders: db.orders,
     users: stripPasswords(db.users),
+    settings: db.settings || DEFAULT_STORE_SETTINGS,
     isAdminSessionValid: isAdminVerified,
     updatedAt: db.updatedAt,
   });
@@ -123,6 +125,7 @@ export async function POST(req: NextRequest) {
       'update_product',
       'delete_product',
       'update_orders',
+      'update_settings',
     ];
 
     if (adminActions.includes(body.action) && !isAdminVerified) {
@@ -173,6 +176,21 @@ export async function POST(req: NextRequest) {
       db.orders = body.orders;
       await writeDatabase(db);
       return NextResponse.json({ ok: true, orders: db.orders });
+    }
+
+    if (body.action === 'update_settings' && body.settings) {
+      db.settings = {
+        standardShippingCost: Math.max(
+          0,
+          Number(body.settings.standardShippingCost) || 0
+        ),
+        freeShippingThreshold: Math.max(
+          0,
+          Number(body.settings.freeShippingThreshold) || 0
+        ),
+      };
+      await writeDatabase(db);
+      return NextResponse.json({ ok: true, settings: db.settings });
     }
 
     // 4. Customer Order Creation (Server-Side Authoritative Price & Stock Calculation)
@@ -227,8 +245,14 @@ export async function POST(req: NextRequest) {
         });
       }
 
+      const freeThreshold =
+        db.settings?.freeShippingThreshold ?? FREE_SHIPPING_THRESHOLD;
+      const standardShipping =
+        db.settings?.standardShippingCost ?? STANDARD_SHIPPING_COST;
       const verifiedShipping =
-        verifiedSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
+        freeThreshold === 0 || verifiedSubtotal >= freeThreshold
+          ? 0
+          : standardShipping;
       const verifiedTotal = verifiedSubtotal + verifiedShipping;
 
       const safeOrder: Order = {

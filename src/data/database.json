@@ -1,6 +1,66 @@
 {
   "products": [
     {
+      "slug": "deneme-291",
+      "name": "deneme",
+      "subtitle": "Özel Tasarım Lüks İç Giyim Seti",
+      "category": "vucut-coraplari",
+      "categoryName": "Aksesuar & Eldiven",
+      "price": 1,
+      "compareAtPrice": 3,
+      "currency": "TRY",
+      "spiceLevel": "seductive",
+      "isFeatured": true,
+      "isNewArrival": true,
+      "isAfterDarkExclusive": false,
+      "description": "",
+      "fabricDetails": [
+        "%82 Fransız Danteli ve İtalyan Tülü, %18 Elastan",
+        "%100 Saf Pamuklu İç Ağ Astarı",
+        "Koruyucu Hijyen Bandı ve %100 Gizli Paketleme"
+      ],
+      "modelMeasurements": "Model Boy: 176 cm | Göğüs: 85, Bel: 60, Kalça: 90 | Üzerindeki Beden: S",
+      "hygieneSealRequired": true,
+      "media": [
+        {
+          "id": "default-1",
+          "type": "image",
+          "url": "/images/products/aura-bride-bodysuit/aura-bride-bodysuit-1.jpg",
+          "alt": "Ürün Görseli 1",
+          "caption": "Ön Görünüm"
+        }
+      ],
+      "variants": [
+        {
+          "size": "XS",
+          "sku": "VSP-DEN-XS",
+          "stock": 5
+        },
+        {
+          "size": "S",
+          "sku": "VSP-DEN-S",
+          "stock": 12
+        },
+        {
+          "size": "M",
+          "sku": "VSP-DEN-M",
+          "stock": 10
+        },
+        {
+          "size": "L",
+          "sku": "VSP-DEN-L",
+          "stock": 5
+        },
+        {
+          "size": "XL",
+          "sku": "VSP-DEN-XL",
+          "stock": 2
+        }
+      ],
+      "id": "prod-1793879680291",
+      "createdAt": "2026-11-05T11:54:40.291Z"
+    },
+    {
       "id": "prod-aura-bride",
       "slug": "aura-bride-ipek-saten-volanli-bodysuit",
       "name": "Aura Bride İpek Saten & Dantel Volanlı Bodysuit",
@@ -161,7 +221,7 @@
         {
           "size": "XS",
           "sku": "VSP-NOC-XS",
-          "stock": 6
+          "stock": 5
         },
         {
           "size": "S",
@@ -922,7 +982,7 @@
         {
           "size": "XS",
           "sku": "VSP-VEL-XS",
-          "stock": 5
+          "stock": 4
         },
         {
           "size": "S",
@@ -1335,6 +1395,75 @@
   ],
   "orders": [
     {
+      "id": "ord-1793873630237",
+      "orderNumber": "VSP-91551",
+      "customer": {
+        "isGuest": false,
+        "userId": "usr-admin-1",
+        "fullName": "VESPER Mağaza Yöneticisi",
+        "email": "admin@vesperbody.com",
+        "phone": "0532 100 00 00",
+        "city": "İstanbul",
+        "district": "dsaasdsad",
+        "addressLine": "dasdsasad, dasnkd asl, asd sadas",
+        "discreetPackagingConfirmed": true
+      },
+      "items": [
+        {
+          "productId": "prod-nocturne-lace",
+          "slug": "nocturne-transparan-cicekli-dantel-babydoll",
+          "name": "Nocturne Transparan Çiçekli Dantel Babydoll Elbise",
+          "price": 1790,
+          "size": "XS",
+          "quantity": 1,
+          "imageUrl": "/images/products/nocturne-lace-babydoll/nocturne-lace-babydoll-1.jpg",
+          "maxStock": 6
+        }
+      ],
+      "subtotal": 1790,
+      "shippingCost": 0,
+      "totalAmount": 1790,
+      "paymentProvider": "shopier",
+      "paymentTransactionId": "SHOPIER-26542071",
+      "installmentCount": 1,
+      "status": "paid",
+      "createdAt": "2026-11-05T10:13:50.237Z"
+    },
+    {
+      "id": "ord-1793872357955",
+      "orderNumber": "VSP-95595",
+      "customer": {
+        "isGuest": true,
+        "fullName": "cxbbcf",
+        "email": "bvcb@mail.com",
+        "phone": "bccvvc",
+        "city": "İstanbul",
+        "district": "vccb",
+        "addressLine": "vbc",
+        "discreetPackagingConfirmed": true
+      },
+      "items": [
+        {
+          "productId": "prod-velvet-secret",
+          "slug": "velvet-secret-pencereli-siyah-jartiyer-takimi",
+          "name": "Velvet Secret Pencereli Siyah Jartiyer Takımı",
+          "price": 1850,
+          "size": "XS",
+          "quantity": 1,
+          "imageUrl": "/images/products/velvet-secret-cutout-garter-set/velvet-secret-cutout-garter-set-1.jpg",
+          "maxStock": 5
+        }
+      ],
+      "subtotal": 1850,
+      "shippingCost": 0,
+      "totalAmount": 1850,
+      "paymentProvider": "shopier",
+      "paymentTransactionId": "SHOPIER-52677891",
+      "installmentCount": 1,
+      "status": "paid",
+      "createdAt": "2026-11-05T09:52:37.955Z"
+    },
+    {
       "id": "ord-1001",
       "orderNumber": "VLR-84920",
       "customer": {
@@ -1416,5 +1545,34 @@
       "createdAt": "2026-10-29T17:45:00Z"
     }
   ],
-  "updatedAt": "2026-10-31T02:34:27.358Z"
+  "updatedAt": "2026-11-05T11:54:40.329Z",
+  "settings": {
+    "standardShippingCost": 89,
+    "freeShippingThreshold": 1500
+  },
+  "users": [
+    {
+      "id": "usr-admin-1",
+      "fullName": "VESPER Mağaza Yöneticisi",
+      "email": "admin@vesperbody.com",
+      "phone": "0532 100 00 00",
+      "password": "sha256:37b93ef24c854d89ea532932024cdef55ca8ecf0124e56a64a968566d909bc5a",
+      "isAdmin": true,
+      "createdAt": "2026-10-28T09:00:00Z"
+    },
+    {
+      "id": "usr-1",
+      "fullName": "Ece Demir",
+      "email": "ece.demir@example.com",
+      "phone": "0544 219 30 11",
+      "password": "sha256:0398df50d630aea0fda98e73b1bdb754bfa6d396f6c085812ffc5ac027f1292c",
+      "isAdmin": false,
+      "createdAt": "2026-10-29T14:00:00Z",
+      "savedAddress": {
+        "city": "İzmir",
+        "district": "Karşıyaka",
+        "addressLine": "Bostanlı Mah. Cemal Gürsel Cad. No: 88 D: 12"
+      }
+    }
+  ]
 }

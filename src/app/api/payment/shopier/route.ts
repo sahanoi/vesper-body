@@ -132,8 +132,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const freeThreshold =
+      db.settings?.freeShippingThreshold ?? FREE_SHIPPING_THRESHOLD;
+    const standardShipping =
+      db.settings?.standardShippingCost ?? STANDARD_SHIPPING_COST;
     const shipping =
-      subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
+      freeThreshold === 0 || subtotal >= freeThreshold ? 0 : standardShipping;
     const authoritativeTotal = subtotal + shipping;
     const itemsSummary = summaryParts.join(' | ');
 

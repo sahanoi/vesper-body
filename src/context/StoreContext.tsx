@@ -7,6 +7,7 @@ import {
   OrderCustomer,
   OrderStatus,
   Product,
+  StoreSettings,
   StoreUser,
 } from '@/types/commerce';
 import { INITIAL_ORDERS, INITIAL_PRODUCTS } from '@/data/initial-catalog';
@@ -48,6 +49,10 @@ interface StoreContextType {
   cartSubtotal: number;
   shippingCost: number;
   freeShippingThreshold: number;
+  settings: StoreSettings;
+  updateStoreSettings: (
+    newSettings: StoreSettings
+  ) => Promise<{ ok: boolean; error?: string }>;
 
   // Auth (Member, Guest, or Admin)
   currentUser: StoreUser | null;
@@ -118,6 +123,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [giftMysteryNote, setGiftMysteryNote] = useState<string>('');
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [users, setUsers] = useState<StoreUser[]>([]);
+  const [settings, setSettings] = useState<StoreSettings>({
+    standardShippingCost: 89,
+    freeShippingThreshold: 1500,
+  });
   const [currentUser, setCurrentUser] = useState<StoreUser | null>(null);
   const [hydrated, setHydrated] = useState<boolean>(false);
 
@@ -168,6 +177,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             }
             if (Array.isArray(data.users)) {
               setUsers(data.users);
+            }
+            if (data.settings) {
+              setSettings(data.settings);
             }
           }
         }
@@ -373,9 +385,36 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     0
   );
   const shippingCost =
-    cartSubtotal === 0 || cartSubtotal >= FREE_SHIPPING_THRESHOLD
+    cartSubtotal === 0 ||
+    (settings.freeShippingThreshold === 0 ||
+      cartSubtotal >= settings.freeShippingThreshold)
       ? 0
-      : STANDARD_SHIPPING_COST;
+      : settings.standardShippingCost;
+
+  const updateStoreSettings = async (
+    newSettings: StoreSettings
+  ): Promise<{ ok: boolean; error?: string }> => {
+    try {
+      const res = await fetch('/api/store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_settings',
+          settings: newSettings,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        return { ok: false, error: data.error || 'Ayarlar kaydedilemedi.' };
+      }
+      if (data.settings) {
+        setSettings(data.settings);
+      }
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Sunucu bağlantı hatası.' };
+    }
+  };
 
   const loginUser = (email: string, fullName = 'Zeynep Aydın') => {
     const isAdminEmail =
@@ -706,7 +745,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         updateCartQuantity,
         cartSubtotal,
         shippingCost,
-        freeShippingThreshold: FREE_SHIPPING_THRESHOLD,
+        freeShippingThreshold: settings.freeShippingThreshold,
+        settings,
+        updateStoreSettings,
         currentUser,
         users,
         isAdmin,

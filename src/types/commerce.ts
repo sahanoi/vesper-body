@@ -93,6 +93,11 @@ export interface Order {
   createdAt: string;
 }
 
+export interface StoreSettings {
+  standardShippingCost: number;
+  freeShippingThreshold: number;
+}
+
 export interface StoreUser {
   id: string;
   fullName: string;

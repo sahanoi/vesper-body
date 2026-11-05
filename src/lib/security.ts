@@ -144,3 +144,4 @@ export function sanitizeText(input: unknown, maxLength = 500): string {
     .trim()
     .slice(0, maxLength);
 }
+
