@@ -25,6 +25,7 @@ function submitShopierFastCheckoutForm(actionUrl: string, productId: string) {
   form.appendChild(prodInput);
 
   const qtyInput = document.createElement('input');
+  // Shopier lands on the cart page (/s/cart) so the customer can review/remove items.
   qtyInput.type = 'hidden';
   qtyInput.name = 'quantity';
   qtyInput.value = '1';

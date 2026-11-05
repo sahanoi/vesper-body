@@ -246,9 +246,7 @@ export async function POST(req: NextRequest) {
         mode: 'fast_checkout',
         verifiedAmount: authoritativeTotal,
         shopierProductId: String(data.id),
-        directCheckoutActionUrl: `https://www.shopier.com/s/shipping/${encodeURIComponent(
-          SHOPIER_SHOP_SLUG
-        )}`,
+        directCheckoutActionUrl: 'https://www.shopier.com/s/cart',
         paymentUrl: data.url,
       });
     }
