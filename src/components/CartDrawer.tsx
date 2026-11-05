@@ -239,7 +239,7 @@ export function CartDrawer() {
               <ArrowRight className="w-4 h-4" />
             </Link>
             <p className="text-[11px] text-center text-[var(--text-secondary)]">
-              256-Bit SSL &amp; 3D Secure Güvencesiyle • %100 Gizli Paketleme
+              256-Bit SSL & 3D Secure Güvencesiyle • %100 Gizli Paketleme
             </p>
           </div>
         )}

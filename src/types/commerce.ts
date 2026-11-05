@@ -32,6 +32,8 @@ export interface Product {
   categoryName: string;
   price: number;
   compareAtPrice?: number;
+  shippingCost?: number;
+  freeShipping?: boolean;
   currency: 'TRY';
   spiceLevel: SpiceLevel;
   isFeatured?: boolean;
@@ -91,11 +93,6 @@ export interface Order {
   status: OrderStatus;
   trackingCode?: string;
   createdAt: string;
-}
-
-export interface StoreSettings {
-  standardShippingCost: number;
-  freeShippingThreshold: number;
 }
 
 export interface StoreUser {

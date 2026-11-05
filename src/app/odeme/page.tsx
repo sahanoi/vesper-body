@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-  Lock,
   ShieldCheck,
   Sparkles,
   ArrowRight,
@@ -57,7 +56,7 @@ export default function CheckoutPage() {
 
     if (!hygieneAccepted) {
       setErrorMsg(
-        'Lütfen Mesafeli Satış Sözleşmesi ve Hijyen Mühürü şartlarını onaylayın.'
+        'Lütfen Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi şartlarını onaylayın.'
       );
       return;
     }
@@ -112,13 +111,13 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <div className="mb-8 text-center">
+      <div className="mb-8 text-center sm:text-left">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--accent-primary)] block mb-1">
+          VESPER BODY
+        </span>
         <h1 className="font-serif-editorial text-3xl sm:text-4xl font-semibold">
           Sipariş Özeti
         </h1>
-        <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
-          Seçtiğiniz ürünleri ve bedenleri kontrol ederek güvenli ödeme sayfasına geçin.
-        </p>
       </div>
 
       {cart.length === 0 ? (
@@ -128,13 +127,13 @@ export default function CheckoutPage() {
             href="/"
             className="inline-block px-6 py-2.5 rounded-full bg-[var(--accent-primary)] text-white text-xs font-semibold"
           >
-            Alışverişe Başla
+            Koleksiyona Dön
           </Link>
         </div>
       ) : (
         <form
           onSubmit={handleProceedToPayment}
-          className="rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 sm:p-8 shadow-xl space-y-6"
+          className="rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 sm:p-8 space-y-6 shadow-xl"
         >
           {/* Selected Products List */}
           <div className="space-y-4 divide-y divide-[var(--border-subtle)]">
@@ -151,7 +150,7 @@ export default function CheckoutPage() {
                       className="w-20 h-24 object-cover rounded-xl border border-[var(--border-subtle)]"
                     />
                   </Link>
-                  <div className="space-y-1.5 min-w-0">
+                  <div className="min-w-0 space-y-1.5">
                     <Link
                       href={`/urun/${item.slug}`}
                       className="font-medium text-sm sm:text-base hover:text-[var(--accent-primary)] transition-colors block truncate"
@@ -163,11 +162,11 @@ export default function CheckoutPage() {
                         Beden: {item.size}
                       </span>
                       <span>•</span>
-                      <span>Birim Fiyat: {item.price.toLocaleString('tr-TR')} TL</span>
+                      <span>Birim: {item.price.toLocaleString('tr-TR')} TL</span>
                     </div>
 
                     <div className="flex items-center gap-3 pt-1">
-                      <div className="inline-flex items-center border border-[var(--border-subtle)] rounded-lg bg-[var(--bg-canvas)]">
+                      <div className="inline-flex items-center border border-[var(--border-subtle)] rounded-lg bg-[var(--bg-canvas)] overflow-hidden">
                         <button
                           type="button"
                           onClick={() =>
@@ -224,40 +223,38 @@ export default function CheckoutPage() {
 
           {/* Optional Gift Note */}
           <div className="pt-4 border-t border-[var(--border-subtle)]">
-            <label className="flex items-center gap-1.5 text-xs font-medium mb-1.5 text-[var(--accent-primary)]">
+            <label className="flex items-center gap-1.5 text-xs font-medium mb-2 text-[var(--accent-primary)]">
               <Sparkles className="w-3.5 h-3.5" />
-              Paketin İçine Gizli Zarf Notu Ekle (İsteğe Bağlı)
+              Gizli Zarf Notu (İsteğe Bağlı)
             </label>
             <input
               type="text"
               value={giftMysteryNote}
               onChange={(e) => setGiftMysteryNote(e.target.value)}
-              placeholder="Kutu içindeki mühürlü siyah zarfa yazılacak özel notunuz..."
+              placeholder="Paketin içindeki mühürlü siyah zarfa eklenecek özel not..."
               className="w-full p-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-canvas)] text-xs focus:outline-none focus:border-[var(--accent-primary)]"
             />
           </div>
 
           {/* Price Breakdown */}
-          <div className="p-5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] space-y-2 text-xs sm:text-sm">
+          <div className="p-5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] space-y-2.5 text-xs sm:text-sm">
             <div className="flex justify-between text-[var(--text-secondary)]">
               <span>Ara Toplam</span>
               <span>{cartSubtotal.toLocaleString('tr-TR')} TL</span>
             </div>
             <div className="flex justify-between text-[var(--text-secondary)]">
-              <span>Gizli Kargo Gönderimi</span>
-              <span>
-                {shippingCost === 0 ? 'ÜCRETSİZ' : `${shippingCost} TL`}
+              <span>Gizli Kargo</span>
+              <span className={shippingCost === 0 ? 'text-emerald-500 font-semibold' : ''}>
+                {shippingCost === 0 ? 'ÜCRETSİZ' : `${shippingCost.toLocaleString('tr-TR')} TL`}
               </span>
             </div>
             <div className="flex justify-between text-base sm:text-lg font-bold pt-2.5 border-t border-[var(--border-subtle)] text-[var(--text-primary)]">
-              <span>Ödenecek Toplam</span>
-              <span>
-                {(cartSubtotal + shippingCost).toLocaleString('tr-TR')} TL
-              </span>
+              <span>Toplam</span>
+              <span>{(cartSubtotal + shippingCost).toLocaleString('tr-TR')} TL</span>
             </div>
           </div>
 
-          {/* Agreements */}
+          {/* Minimal Checkboxes */}
           <div className="space-y-2.5 text-xs">
             <label className="flex items-start gap-2.5 cursor-pointer">
               <input
@@ -298,18 +295,17 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-4 px-6 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] disabled:opacity-60 text-white text-sm sm:text-base font-semibold flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+            className="w-full py-4 px-6 rounded-full bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] disabled:opacity-60 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
           >
-            <Lock className="w-4 h-4" />
             <span>
-              {isSubmitting ? 'Ödeme Sayfası Hazırlanıyor...' : 'Ödeme Sayfasına Geç'}
+              {isSubmitting ? 'Ödeme Sayfası Açılıyor...' : 'Ödeme Sayfasına Geç'}
             </span>
-            {!isSubmitting && <ArrowRight className="w-4 h-4" />}
+            <ArrowRight className="w-4 h-4" />
           </button>
 
           <div className="flex items-center justify-center gap-2 text-[11px] text-[var(--text-secondary)]">
             <ShieldCheck className="w-4 h-4 text-emerald-500" />
-            <span>256-Bit SSL &amp; 3D Secure Güvenli Ödeme Altyapısı</span>
+            <span>256-Bit SSL &amp; 3D Secure Güvenli Ödeme</span>
           </div>
         </form>
       )}

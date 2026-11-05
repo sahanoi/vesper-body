@@ -98,6 +98,9 @@ export async function POST(req: NextRequest) {
     // ZERO-TRUST SERVER-SIDE PRICE & PRODUCT IMAGE RESOLUTION
     const db = await readDatabase();
     let subtotal = 0;
+    let hasCustomShipping = false;
+    let maxCustomShipping = 0;
+    let allExplicitlyFree = true;
     const summaryParts: string[] = [];
     let primaryProductTitle = '';
     let coverImagePath = '';
@@ -117,6 +120,21 @@ export async function POST(req: NextRequest) {
       subtotal += dbProd.price * qty;
       summaryParts.push(`${dbProd.name} (${item.size} Beden x${qty})`);
 
+      if (dbProd.freeShipping || dbProd.shippingCost === 0) {
+        hasCustomShipping = true;
+      } else if (
+        typeof dbProd.shippingCost === 'number' &&
+        dbProd.shippingCost > 0
+      ) {
+        hasCustomShipping = true;
+        allExplicitlyFree = false;
+        if (dbProd.shippingCost > maxCustomShipping) {
+          maxCustomShipping = dbProd.shippingCost;
+        }
+      } else {
+        allExplicitlyFree = false;
+      }
+
       if (!primaryProductTitle) {
         primaryProductTitle =
           clientItems.length === 1
@@ -132,12 +150,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const freeThreshold =
-      db.settings?.freeShippingThreshold ?? FREE_SHIPPING_THRESHOLD;
-    const standardShipping =
-      db.settings?.standardShippingCost ?? STANDARD_SHIPPING_COST;
-    const shipping =
-      freeThreshold === 0 || subtotal >= freeThreshold ? 0 : standardShipping;
+    let shipping =
+      subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_COST;
+    if (hasCustomShipping && allExplicitlyFree) {
+      shipping = 0;
+    } else if (maxCustomShipping > 0) {
+      shipping = maxCustomShipping;
+    }
+
     const authoritativeTotal = subtotal + shipping;
     const itemsSummary = summaryParts.join(' | ');
 
